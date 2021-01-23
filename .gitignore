@@ -1,0 +1,4 @@
+extern/
+ndkpath.txt
+addr2line.bat
+qpm.shared.json

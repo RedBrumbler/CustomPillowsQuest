@@ -1,0 +1,49 @@
+{
+  "id": "Qosmetics",
+  "name": "Qosmetics",
+  "version": "UI",
+  "icon": "cover.png",
+  "coverImageFilename": "cover.png",
+  "author": "RedBrumbler",
+  "description": [
+    "Menu Pillow mod for Quest\nOriginal by Toni Macaroni for PC"
+  ],
+  "category": "Gameplay",
+  "gameVersion": "1.13.2",
+  "platform": "Quest",
+  "components": [
+    {
+      "type": "HookMod",
+      "installAction": {
+        "installLibraryFile": "libmenupillowquest.so"
+      },
+      "uninstallAction": {
+        "removeLibraryFile": "libmenupillowquest.so"
+      }
+    },
+    {
+      "type": "HookModLibrary",
+      "installAction": {
+        "installLibraryFile": "libbeatsaber-hook_1_0_10.so"
+      }
+    },
+    {
+      "type": "HookModLibrary",
+      "installAction": {
+        "installLibraryFile": "libbs-utils.so"
+      }
+    },
+    {
+      "type": "HookModLibrary",
+      "installAction": {
+        "installLibraryFile": "libcustom-types.so"
+      }
+    },
+    {
+      "type": "HookModLibrary",
+      "installAction": {
+        "installLibraryFile": "libquestui.so"
+      }
+    }
+  ]
+}
