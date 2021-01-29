@@ -1,7 +1,7 @@
 {
-  "id": "Qosmetics",
-  "name": "Qosmetics",
-  "version": "UI",
+  "id": "MenuPillowQuest",
+  "name": "MenuPillowQuest",
+  "version": "0.1.0",
   "icon": "cover.png",
   "coverImageFilename": "cover.png",
   "author": "RedBrumbler",
@@ -24,7 +24,7 @@
     {
       "type": "HookModLibrary",
       "installAction": {
-        "installLibraryFile": "libbeatsaber-hook_1_0_10.so"
+        "installLibraryFile": "libbeatsaber-hook_1_0_12.so"
       }
     },
     {

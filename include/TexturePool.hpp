@@ -1,21 +1,26 @@
 #pragma once
 #include "UnityEngine/Texture2D.hpp"
+#include "UnityEngine/Sprite.hpp"
 #include <vector>
-#include <map>
+
 namespace MenuPillow
 {
     class TexturePool
     {
         public:
-            UnityEngine::Texture2D* GetTexture(int index = -1);
-            void ReloadTextures();
+            static std::string GetTextureName(int index = -1);
+            static void ReloadTextures();
+            static void LoadAllTextures();
+            static bool GetIsActive(std::string name);
+            static void AddTexture(std::string name);
+            static void RemoveTexture(std::string name);
+            static const std::vector<std::string>& GetTextureVector()
+            {
+                return textures;
+            }
 
-            void AddTexture(std::string name);
-            void RemoveTexture(std::string name);
         private:
-            void LoadAllTextures();
-
-            std::map<std::string, UnityEngine::Texture2D*> textures;
-            std::map<std::string, UnityEngine::Texture2D*> activeTextures;
+            static inline std::vector<std::string> textures = {};
+            static inline std::vector<std::string> activeTextures = {};
     };
 }

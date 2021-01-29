@@ -1,5 +1,5 @@
 #pragma once
-#include "Pile.hpp"
+#include "CustomTypes/Pile.hpp"
 #include "UnityEngine/Vector3.hpp"
 #include <map>
 #include "beatsaber-hook/shared/rapidjson/include/rapidjson/document.h"
@@ -17,28 +17,38 @@ namespace MenuPillow
     class Constellation
     {
         public:
+            Constellation()
+            {
+                this->name = "empty";
+                this->pillowParams = {};
+            }
+
             Constellation(std::string name, std::vector<pillowparams> list)
             {
                 this->name = name;
-                this->params = list;
+                this->pillowParams = list;
             }
 
-            Constellation(const rapidjson::Value& val)
+            Constellation(const rapidjson::Document& val)
             {
                 name = val["name"].GetString();
 
-                const rapidjson::Value& positions = val["positions"];
-                assert(positions.IsArray());
-                for (auto& pos : positions.GetArray())
+                const rapidjson::Value& params = val["params"];
+                assert(params.IsArray());
+                for (auto& param : params.GetArray())
                 {
-                    int type = pos["type"].GetInt();
-                    UnityEngine::Vector3 position = UnityEngine::Vector3(pos["pos"]["x"].GetDouble(), pos["pos"]["y"].GetDouble(), pos["pos"]["z"].GetDouble());
-                    UnityEngine::Vector3 rotation = UnityEngine::Vector3(pos["pos"]["x"].GetDouble(), pos["pos"]["y"].GetDouble(), pos["pos"]["z"].GetDouble());
-                    pillowparams param = {type, position, rotation};
-                    params.push_back(param);
+                    int type = param["type"].GetInt();
+                    //                                                              small Y offset as to make it not inside the floor VVVVVVV
+                    UnityEngine::Vector3 position = UnityEngine::Vector3(param["pos"]["x"].GetDouble(), param["pos"]["y"].GetDouble() + 0.2f, param["pos"]["z"].GetDouble());
+                    UnityEngine::Vector3 rotation = UnityEngine::Vector3(param["rot"]["x"].GetDouble(), param["rot"]["y"].GetDouble(), param["rot"]["z"].GetDouble());
+                    pillowparams pillowParam = {type, position, rotation};
+                    pillowParams.push_back(pillowParam);
                 }
             }
 
+            static Constellation ConstellationFromFilePath(std::string filePath);
+            static std::vector<Constellation> ConstellationsFromFolderPath(std::string folderPath);
+            
             const std::string& get_name()
             {
                 return name;
@@ -46,11 +56,11 @@ namespace MenuPillow
 
             const std::vector<pillowparams>& get_params()
             {
-                return params;
+                return pillowParams;
             }
 
         private:
             std::string name = "";
-            std::vector<pillowparams> params = {};
+            std::vector<pillowparams> pillowParams = {};
     };
 }

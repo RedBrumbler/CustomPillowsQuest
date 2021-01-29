@@ -6,6 +6,8 @@
 #include "beatsaber-hook/shared/utils/il2cpp-utils-methods.hpp"
 #include "beatsaber-hook/shared/utils/il2cpp-utils.hpp"
 
+extern Logger& getLogger();
+
 bool FileUtils::getFileNamesInDir(std::string extension, std::string dir, std::vector<std::string>& fileNames)
 {
     bool foundTheExtension = false; 
@@ -57,4 +59,11 @@ UnityEngine::Texture2D* FileUtils::TextureFromFile(std::string filePath, int wid
     UnityEngine::Texture2D* texture = UnityEngine::Texture2D::New_ctor(width, height, UnityEngine::TextureFormat::RGBA32, false, false);
     UnityEngine::ImageConversion::LoadImage(texture, bytes, false);
     return texture;
+}
+
+std::string FileUtils::RemoveExtension(std::string fileName)
+{
+    fileName.erase(fileName.find_last_of("."));
+
+    return fileName;
 }

@@ -10,6 +10,7 @@ class FileUtils
         static std::string getFileExtension(const std::string& FileName);
         static std::string getFileName(std::string filePath);
         static std::string getFolderName(std::string filePath);
+        static std::string RemoveExtension(std::string fileName);
 
         static UnityEngine::Texture2D* TextureFromFile(std::string filePath, int width, int height);
 };

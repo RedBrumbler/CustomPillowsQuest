@@ -1,24 +1,27 @@
 #include "TexturePool.hpp"
 #include "static-defines.hpp"
 #include "FileUtils.hpp"
+#include "config.hpp"
+#include "UnityEngine/Object.hpp"
+
+#include "questui/shared/BeatSaberUI.hpp"
+
+extern config_t config;
+
+extern Logger& getLogger();
 
 namespace MenuPillow
 {
-    UnityEngine::Texture2D* TexturePool::GetTexture(int index)
+    std::string TexturePool::GetTextureName(int index)
     {
-        if (!activeTextures.size()) return nullptr;
-        if (index < 0) index = rand() % activeTextures.size();
-        int counter = 0;
-        for (auto& pair : activeTextures)
-        {
-            if (counter == index) return pair.second;
-            counter++;
-        }
-        return nullptr;
+        if (!activeTextures.size()) return "";
+        if (index < 0 || index >= activeTextures.size()) index = rand() % activeTextures.size();
+        return activeTextures[index];
     }
 
     void TexturePool::ReloadTextures()
     {
+        getLogger().info("Reloading Textures");
         activeTextures.clear();
         textures.clear();
         LoadAllTextures();
@@ -26,37 +29,54 @@ namespace MenuPillow
 
     void TexturePool::AddTexture(std::string name)
     {
-        std::map<std::string, UnityEngine::Texture2D*>::iterator it = textures.find(name);
+        std::vector<std::string>::iterator all = std::find(textures.begin(), textures.end(), name);
+        std::vector<std::string>::iterator active = std::find(activeTextures.begin(), activeTextures.end(), name);
 
-        if (it != textures.end()) 
+        if (active == activeTextures.end() && all != textures.end())
         {
-            std::string key = it->first;
-            UnityEngine::Texture2D* texture = it->second;
-            activeTextures[key] = texture;
+            activeTextures.push_back(name);
+            config.lastActiveTextures = activeTextures;
         }
+    }
+
+    bool TexturePool::GetIsActive(std::string name)
+    {
+        if (std::find(activeTextures.begin(), activeTextures.end(), name) != activeTextures.end()) return true;
+        return false; 
     }
 
     void TexturePool::RemoveTexture(std::string name)
     {
-        std::map<std::string, UnityEngine::Texture2D*>::iterator it = activeTextures.find(name);
+        std::vector<std::string> newActive = {};
 
-        if (it != activeTextures.end()) 
+        for (auto oldName : activeTextures)
         {
-            activeTextures.erase(it);
+            if (oldName != name) newActive.push_back(oldName); 
         }
+
+        activeTextures = newActive;
+        config.lastActiveTextures = newActive;
     }
 
     void TexturePool::LoadAllTextures()
     {
+        if (textures.size() > 0) 
+        {
+            getLogger().error("Tried loading textures, but they were already loaded, aborting!");
+            return;
+        }
         std::vector<std::string> fileNames;
 
-        FileUtils::getFileNamesInDir(".png", IMAGEPATH, fileNames);
+        FileUtils::getFileNamesInDir("png", IMAGEPATH, fileNames);
 
         for (auto name : fileNames)
         {
-            std::string path = IMAGEPATH + name;
+            textures.push_back(name);
+        }
 
-            textures[name] = FileUtils::TextureFromFile(path, 474, 2012);
+        for (auto name : config.lastActiveTextures)
+        {
+            AddTexture(name);
         }
     }
 }
