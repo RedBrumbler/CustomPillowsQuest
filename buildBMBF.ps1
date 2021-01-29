@@ -10,8 +10,6 @@ if (-not ($PSVersionTable.PSEdition -eq "Core")) {
 Compress-Archive -Path  "./libs/arm64-v8a/libmenupillowquest.so",`
                         "./bmbfmod.json",`
                         "./extern/libbeatsaber-hook_1_0_12.so",`
-                        "./extern/libbs-utils.so",`
-                        "./extern/libquestui.so",`
                         "./ExtraFiles/container.pillows",`
                         "./ExtraFiles/BeatTogether.png",`
                         "./ExtraFiles/BMBF.png",`
@@ -19,6 +17,7 @@ Compress-Archive -Path  "./libs/arm64-v8a/libmenupillowquest.so",`
                         "./ExtraFiles/Cubes.png",`
                         "./ExtraFiles/Qounters-.png",`
                         "./ExtraFiles/RichPresence.png",`
+                        "./ExtraFiles/quest2.png",`
+                        "./ExtraFiles/ScoreSaber.png",`
                         "./ExtraFiles/simple.json",`
-                        "./ExtraFiles/busy.json",`
-                        "./extern/libcustom-types.so" -DestinationPath "./MenuPillowQuest.zip" -Update
+                        "./ExtraFiles/busy.json", -DestinationPath "./CustomPillowsQuest.zip" -Update
