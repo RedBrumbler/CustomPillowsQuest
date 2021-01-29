@@ -76,6 +76,8 @@ namespace MenuPillow
 
         for (auto name : config.lastActiveTextures)
         {
+            std::string path = IMAGEPATH + name;
+            if (!fileexists(path.c_str())) continue;
             AddTexture(name);
         }
     }

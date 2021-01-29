@@ -19,4 +19,6 @@ Compress-Archive -Path  "./libs/arm64-v8a/libmenupillowquest.so",`
                         "./ExtraFiles/Cubes.png",`
                         "./ExtraFiles/Qounters-.png",`
                         "./ExtraFiles/RichPresence.png",`
+                        "./ExtraFiles/simple.json",`
+                        "./ExtraFiles/busy.json",`
                         "./extern/libcustom-types.so" -DestinationPath "./MenuPillowQuest.zip" -Update

@@ -24,7 +24,6 @@ namespace MenuPillow
             Object::DontDestroyOnLoad(newObj);
             manager = newObj->AddComponent<PillowManager*>();
         }
-
         manager->get_gameObject()->SetActive(true);
     }
 
@@ -32,7 +31,7 @@ namespace MenuPillow
     {
         PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
         if (!manager) return;
-        manager->get_gameObject()->SetActive(true);
+        manager->get_gameObject()->SetActive(false);
     }
 
     void PillowManager::Awake()
@@ -68,19 +67,21 @@ namespace MenuPillow
     {
         // find the constellation with this name, and then make that the active one
         Constellation* constellation = nullptr;
-        if (name == "") name = "default"; 
+        if (name == "") name = "simple"; 
 
         for (auto& it : constellations)
         {
-            constellation = &it; 
-            if (it.get_name().find(name) != std::string::npos) break; 
+            if (it.get_name() == name) 
+            {
+                SetActiveConstellation(it);
+                return;
+            } 
         }
-        if (!constellation) return;
-        SetActiveConstellation(*constellation);
     }
 
     void PillowManager::SetActiveConstellation(Constellation constellation)
     {
+        config.lastActiveConstellation = constellation.get_name();
         if (!config.enabled)
         {
             savedConstellation = constellation;
@@ -121,7 +122,13 @@ namespace MenuPillow
     {
         PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
         if (!manager) return;
-        Array<Pile*>* piles = manager->GetComponentsInChildren<Pile*>();
+        if (!config.enabled)
+        {
+            manager->shouldRandomizeOnReEnable = true;
+            return;
+        }
+
+        Array<Pile*>* piles = manager->GetComponentsInChildren<Pile*>(true);
 
         if (!piles) return;
         for (int i = 0; i < piles->Length(); i++)
@@ -149,8 +156,12 @@ namespace MenuPillow
                 Transform* child = manager->get_transform()->GetChild(i);
                 child->get_gameObject()->SetActive(true);
             }
+            if (manager->shouldRandomizeOnReEnable)
+            {
+                manager->shouldRandomizeOnReEnable = false;
+                manager->RandomizeTextures();
+            }
         }
-        
     }
 
     void PillowManager::OnModDisable()

@@ -144,7 +144,7 @@ extern "C" void load()
     custom_types::Register::RegisterTypes<MenuPillow::PillowManager, MenuPillow::PileProvider>();
     custom_types::Register::RegisterTypes<MenuPillow::MenuPillowFlowCoordinator, MenuPillow::ConfigViewController, MenuPillow::TextureSelectorViewController>();
 
-    QuestUI::Register::RegisterModSettingsFlowCoordinator<MenuPillow::MenuPillowFlowCoordinator*>(modInfo);
+    QuestUI::Register::RegisterModSettingsFlowCoordinator<MenuPillow::MenuPillowFlowCoordinator*>((ModInfo){"Custom Pillows Quest", ID});
 }
 
 bool getSceneName(UnityEngine::SceneManagement::Scene scene, std::string& output)

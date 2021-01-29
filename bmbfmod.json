@@ -1,6 +1,6 @@
 {
-  "id": "MenuPillowQuest",
-  "name": "MenuPillowQuest",
+  "id": "CustomPillowsQuest",
+  "name": "Custom Pillows Quest",
   "version": "0.1.0",
   "icon": "cover.png",
   "coverImageFilename": "cover.png",

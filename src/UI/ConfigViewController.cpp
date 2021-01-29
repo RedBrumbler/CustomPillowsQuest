@@ -54,7 +54,12 @@ namespace MenuPillow
         {
             get_gameObject()->AddComponent<Touchable*>();
             VerticalLayoutGroup* layout = BeatSaberUI::CreateVerticalLayoutGroup(get_transform());
-
+            layout->get_gameObject()->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha(il2cpp_utils::createcsstr("round-rect-panel"), 0.5f);
+            layout->set_childForceExpandHeight(true);
+            layout->set_childControlHeight(false);
+            layout->set_childAlignment(UnityEngine::TextAnchor::MiddleCenter);
+            layout->get_rectTransform()->set_sizeDelta(UnityEngine::Vector2(0.0f, -20.0f));
+            layout->set_spacing(3.0f);
             int active = 0;
             bool found = false;
             for (auto con : *PillowManager::GetConstellations())
@@ -82,9 +87,15 @@ namespace MenuPillow
                     PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
                     if (!manager) return;
                     manager->SetActiveConstellation(constellation);
+                    SaveConfig();
                 });
             constellationSwitcher->Text->SetText(constellationNames[active]);
             
+            Button* saberButton = QuestUI::BeatSaberUI::CreateUIButton(layout->get_transform(), "Shuffle", il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(classof(UnityEngine::Events::UnityAction*), (Il2CppObject*)nullptr, +[]{
+                PillowManager::RandomizeTextures();
+            }));            
+
+
         }
     }
 

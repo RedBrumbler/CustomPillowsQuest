@@ -52,13 +52,16 @@ void AddImageToLayout(Transform* layout, std::string name)
 {
     std::string imagePath = IMAGEPATH + name;
     getLogger().info("Getting sprite from path %s", imagePath.c_str());
+    if (!fileexists(imagePath)) return;
     Sprite* sprite = BeatSaberUI::FileToSprite(imagePath, 474, 1012);
     //Sprite* sprite = Sprite::Create(tex, UnityEngine::Rect(0.0f, 0.0f, (float)474, (float)1012), UnityEngine::Vector2(0.5f,0.5f), 1024.0f, 1u, SpriteMeshType::FullRect, UnityEngine::Vector4(0.0f, 0.0f, 0.0f, 0.0f), false);
     if (!sprite) return;
-    VerticalLayoutGroup* doubleLayout = BeatSaberUI::CreateVerticalLayoutGroup(layout);
-    Button* button = BeatSaberUI::CreateUIButton(doubleLayout->get_transform(), "", "SettingsButton", il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(classof(UnityEngine::Events::UnityAction*), (Il2CppObject*)nullptr, +[](void* irrelevant, Button* button){
+
+    //VerticalLayoutGroup* doubleLayout 
+    Button* button = BeatSaberUI::CreateUIButton(layout, "", "SettingsButton", nullptr);
+    /*il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(classof(UnityEngine::Events::UnityAction*), (Il2CppObject*)nullptr, +[](void* irrelevant, Button* button){
                 
-            }));
+            }));*/
     ButtonSpriteSwap* swap = button->GetComponent<HMUI::ButtonSpriteSwap*>();
 
     swap->normalStateSprite = sprite;
@@ -67,17 +70,15 @@ void AddImageToLayout(Transform* layout, std::string name)
     swap->disabledStateSprite = sprite;
 
     button->set_interactable(false);
-
-    button->get_transform()->set_localScale(UnityEngine::Vector3::get_one() * 0.2f);
-    //BeatSaberUI::CreateImage(layout, sprite, UnityEngine::Vector2(0.0f, 0.0f), UnityEngine::Vector2(0.0f, 0.0f));
+    button->get_transform()->set_localScale(UnityEngine::Vector3::get_one() * 0.22f);
+    return;
 }
 
 void AddToggleToLayout(Transform* layout, std::string name)
 {
     Il2CppString* csName = il2cpp_utils::createcsstr(name, il2cpp_utils::StringType::Manual);
-    VerticalLayoutGroup* doubleLayout = BeatSaberUI::CreateVerticalLayoutGroup(layout);
 
-    BeatSaberUI::CreateToggle(doubleLayout->get_transform(), FileUtils::RemoveExtension(name), MenuPillow::TexturePool::GetIsActive(name), il2cpp_utils::MakeDelegate<UnityAction_1<bool>*>(classof(UnityAction_1<bool>*), csName, 
+    BeatSaberUI::CreateToggle(layout, FileUtils::RemoveExtension(name), MenuPillow::TexturePool::GetIsActive(name), il2cpp_utils::MakeDelegate<UnityAction_1<bool>*>(classof(UnityAction_1<bool>*), csName, 
         +[](Il2CppString* texName, bool value) {
             if (!texName) return;
             std::string name = to_utf8(csstrtostr(texName));
@@ -91,7 +92,8 @@ void AddToggleToLayout(Transform* layout, std::string name)
 struct TextureInfo{
     std::string name;
     int counter;
-    Transform* layout;
+    HorizontalLayoutGroup* layout;
+    Transform* layoutTransform;
     Transform* container;
     TextureInfo(std::string name, Transform* container)
     {
@@ -108,9 +110,18 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
     {
         get_gameObject()->AddComponent<Touchable*>();
         GameObject* container = BeatSaberUI::CreateScrollableSettingsContainer(get_transform());
+        VerticalLayoutGroup* layout = BeatSaberUI::CreateVerticalLayoutGroup(container->get_transform());
         ExternalComponents* externalComponents = container->GetComponent<ExternalComponents*>();
         RectTransform* scrollTransform = externalComponents->Get<RectTransform*>();
         scrollTransform->set_sizeDelta(UnityEngine::Vector2(0.0f, 0.0f));
+
+        
+        layout->set_childForceExpandWidth(false);
+        layout->set_childControlWidth(false);
+        //scrollTransform->set_childAlignment(UnityEngine::TextAnchor::MiddleLeft);
+        //scrollTransform->get_rectTransform()->set_sizeDelta(UnityEngine::Vector2(0.0f, -20.0f));
+        //scrollTransform->set_spacing(3.0f);
+        
         const std::vector<std::string>& texVector = TexturePool::GetTextureVector();
 
         for (auto& name : texVector)
@@ -125,13 +136,18 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
                 switch(info->counter)
                 {
                     case 0:
-                        info->layout = BeatSaberUI::CreateHorizontalLayoutGroup(info->container)->get_transform();
+                        info->layout = BeatSaberUI::CreateHorizontalLayoutGroup(info->container);
+                        info->layout->set_spacing(3.0f);
+                        info->layoutTransform = info->layout->get_transform();
+                        info->layout->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha(il2cpp_utils::createcsstr("round-rect-panel"), 0.5f);
+                        //info->layout->set_childForceExpandWidth(false);
+                        //info->layout->set_childControlWidth(false);
                         break;
                     case 1:
-                        AddImageToLayout(info->layout, info->name);
+                        AddImageToLayout(info->layoutTransform, info->name);
                         break;
                     case 2:
-                        AddToggleToLayout(info->layout, info->name);
+                        AddToggleToLayout(info->layoutTransform, info->name);
                         break;
                     default:
                         free(info);
