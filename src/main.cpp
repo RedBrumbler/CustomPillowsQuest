@@ -24,8 +24,8 @@
 #include "bs-utils/shared/utils.hpp"
 
 #include "static-defines.hpp"
+#include "GlobalNamespace/MainMenuViewController.hpp"
 
-#include "GlobalNamespace/MultiplayerModeSelectionViewController.hpp"
 
 ModInfo modInfo;
 
@@ -58,16 +58,11 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManage
 {
     getSceneName(scene, activeSceneName);
 
-    if (firstWarmup && activeSceneName == "ShaderWarmup")
-    {
-        firstWarmup = false;
-        //PileProvider::LoadBundle();
-    }
-
     if (activeSceneName == "HealthWarning")
     {
+        // get all tex names
         TexturePool::LoadAllTextures();
-        
+        // load bundle & assets right in one go
         PileProvider::LoadBundle(true);
     }
 
@@ -77,11 +72,6 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManage
     }
     else PillowManager::OnMenuSceneDeActivate();
     return SceneManager_SetActiveScene(scene);
-}
-
-MAKE_HOOK_OFFSETLESS(MultiPlayerModeSelectionViewController_DidActivate, void, )
-{
-
 }
 
 void CopyDefaults()
@@ -120,9 +110,6 @@ void CopyDefaults()
         }
 
     }
-    //std::string source = string_format("%s%s", MODPATH, "container.pillows");
-    //if (!fileexists(PILLOWPATH)) writefile(PILLOWPATH, readfile(source));
-    
 }
 
 extern "C" void setup(ModInfo info)
@@ -131,6 +118,8 @@ extern "C" void setup(ModInfo info)
     info.version = VERSION;
 
     modInfo = info;
+
+    getLogger().info("These pillows do be sexy tho");
 }
 
 extern "C" void load()
@@ -145,14 +134,30 @@ extern "C" void load()
     //CopyDefaults();
 
     LoggerContextObject logger = getLogger().WithContext("load");
-    logger.info("Persistent data path: %s", datapath.c_str());
+    logger.info("Installing Hooks...");
+
+    // installing hooks
     INSTALL_HOOK_OFFSETLESS(logger, SceneManager_SetActiveScene, il2cpp_utils::FindMethodUnsafe("UnityEngine.SceneManagement", "SceneManager", "SetActiveScene", 1));
+
+    logger.info("Installed Hooks!");
+
+    logger.info("Registering Types...");
+
+    // register custom types
     custom_types::Register::RegisterTypes<MenuPillow::Pillow, MenuPillow::Updater, MenuPillow::Pile>();
     custom_types::Register::RegisterTypes<MenuPillow::PillowManager, MenuPillow::PileProvider>();
     custom_types::Register::RegisterTypes<MenuPillow::MenuPillowFlowCoordinator, MenuPillow::ConfigViewController, MenuPillow::TextureSelectorViewController>();
 
+    logger.info("Registered Types!");
+
+    logger.info("Registering Flow Coordinator...");
+
     QuestUI::Register::RegisterModSettingsFlowCoordinator<MenuPillow::MenuPillowFlowCoordinator*>((ModInfo){"Custom Pillows", ID});
+
+    logger.info("Registered Flow Coordinator!");
 }
+
+
 
 bool getSceneName(UnityEngine::SceneManagement::Scene scene, std::string& output)
 {

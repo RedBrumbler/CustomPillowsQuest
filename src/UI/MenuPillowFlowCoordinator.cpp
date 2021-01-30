@@ -11,19 +11,24 @@ namespace MenuPillow
     {
         if (firstActivation)
         {
+            // set the title ofc
             SetTitle(il2cpp_utils::createcsstr("Custom Pillows Quest"), HMUI::ViewController::AnimationType::Out);
-            showBackButton = true;
+            showBackButton = true; // we wanna go back
 
+            // make the config view controller
             configViewController = QuestUI::BeatSaberUI::CreateViewController<ConfigViewController*>();
             
+            // make the texture selector
             textureSelectorViewController  = QuestUI::BeatSaberUI::CreateViewController<TextureSelectorViewController*>();
 
+            // give the game the view controllers to present whenever this menu gets activated
             ProvideInitialViewControllers(textureSelectorViewController, nullptr, configViewController, nullptr, nullptr);
         }
     }
 
     void MenuPillowFlowCoordinator::BackButtonWasPressed(HMUI::ViewController* topViewController)
     {
+        // dismiss this flow coordinator
         this->parentFlowCoordinator->DismissFlowCoordinator(this, HMUI::ViewController::AnimationDirection::Horizontal, nullptr, false);
     }
 }

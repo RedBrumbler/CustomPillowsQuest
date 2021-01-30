@@ -29,7 +29,10 @@ namespace MenuPillow
 
             Constellation(const rapidjson::Document& val)
             {
+                // get name from file
                 name = val["constellationName"].GetString();
+                
+                // get all the pillow params from the file
                 const rapidjson::Value& params = val["piles"];
                 assert(params.IsArray());
                 for (auto& param : params.GetArray())
@@ -41,6 +44,8 @@ namespace MenuPillow
                     UnityEngine::Vector3 position = UnityEngine::Vector3(pos["x"].GetDouble(), pos["y"].GetDouble() + 0.1f, pos["z"].GetDouble());
                     UnityEngine::Vector3 rotation = UnityEngine::Vector3(rot["x"].GetDouble(), rot["y"].GetDouble(), rot["z"].GetDouble());
                     pillowparams pillowParam = {type, position, rotation};
+                    
+                    // add to this constellations list of piles
                     pillowParams.push_back(pillowParam);
                 }
             }
@@ -48,11 +53,13 @@ namespace MenuPillow
             static Constellation ConstellationFromFilePath(std::string filePath);
             static std::vector<Constellation> ConstellationsFromFolderPath(std::string folderPath);
             
+            // gets the name
             const std::string& get_name()
             {
                 return name;
             }
 
+            // gets all the params
             const std::vector<pillowparams>& get_params()
             {
                 return pillowParams;

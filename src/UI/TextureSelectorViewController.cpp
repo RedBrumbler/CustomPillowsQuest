@@ -51,39 +51,38 @@ extern Logger& getLogger();
 void AddImageToLayout(Transform* layout, std::string name)
 {
     std::string imagePath = IMAGEPATH + name;
+    
+    // if no file, don't try to add an image
     if (!fileexists(imagePath)) return;
     Sprite* sprite = FileUtils::FileToSprite(imagePath, 474, 1012);
-    //Sprite* sprite = Sprite::Create(tex, UnityEngine::Rect(0.0f, 0.0f, (float)474, (float)1012), UnityEngine::Vector2(0.5f,0.5f), 1024.0f, 1u, SpriteMeshType::FullRect, UnityEngine::Vector4(0.0f, 0.0f, 0.0f, 0.0f), false);
-    if (!sprite) return;
+    Button* button = BeatSaberUI::CreateUIButton(layout, "", "SettingsButton", nullptr); // no delegate needed, it's not interactable
+    button->set_interactable(false);
 
-    //VerticalLayoutGroup* doubleLayout 
-    Button* button = BeatSaberUI::CreateUIButton(layout, "", "SettingsButton", nullptr);
-    /*il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(classof(UnityEngine::Events::UnityAction*), (Il2CppObject*)nullptr, +[](void* irrelevant, Button* button){
-                
-            }));*/
+    // set the button sprites to the pillow image
     ButtonSpriteSwap* swap = button->GetComponent<HMUI::ButtonSpriteSwap*>();
-
     swap->normalStateSprite = sprite;
     swap->highlightStateSprite = sprite;
     swap->pressedStateSprite = sprite;
     swap->disabledStateSprite = sprite;
 
-    button->set_interactable(false);
+    // make button smol
     button->get_transform()->set_localScale(UnityEngine::Vector3::get_one() * 0.22f);
-    return;
 }
 
 void AddToggleToLayout(Transform* layout, std::string name)
 {
     Il2CppString* csName = il2cpp_utils::createcsstr(name, il2cpp_utils::StringType::Manual);
-
     BeatSaberUI::CreateToggle(layout, FileUtils::RemoveExtension(name), MenuPillow::TexturePool::GetIsActive(name), il2cpp_utils::MakeDelegate<UnityAction_1<bool>*>(classof(UnityAction_1<bool>*), csName, 
         +[](Il2CppString* texName, bool value) {
             if (!texName) return;
             std::string name = to_utf8(csstrtostr(texName));
+            // if the texture gets set to enabled, that means we need to add the tex to the list
             if (value) MenuPillow::TexturePool::AddTexture(name);
+            // else remove it
             else MenuPillow::TexturePool::RemoveTexture(name);  
+            // randomize textures after changing the pool
             MenuPillow::PillowManager::RandomizeTextures();
+            //save config so the active textures are saved
             SaveConfig();
         }));
 }
@@ -99,7 +98,6 @@ struct TextureInfo{
 
     TextureInfo(const std::vector<std::string>& texVector, Transform* container) : texVector(texVector)
     {
-        //this->texVector = texVector;
         counter = 0;
         index = 0;
         size = this->texVector.size();
@@ -114,21 +112,19 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
     if (firstActivation)
     {
         get_gameObject()->AddComponent<Touchable*>();
-        GameObject* container = BeatSaberUI::CreateScrollableSettingsContainer(get_transform());
-        VerticalLayoutGroup* layout = BeatSaberUI::CreateVerticalLayoutGroup(container->get_transform());
-        ExternalComponents* externalComponents = container->GetComponent<ExternalComponents*>();
-        RectTransform* scrollTransform = externalComponents->Get<RectTransform*>();
-        scrollTransform->set_sizeDelta(UnityEngine::Vector2(0.0f, 0.0f));
 
+        // needs to be scrollable because it is a list
+        GameObject* container = BeatSaberUI::CreateScrollableSettingsContainer(get_transform());
         
-        layout->set_childForceExpandWidth(false);
-        layout->set_childControlWidth(false);
-        //scrollTransform->set_childAlignment(UnityEngine::TextAnchor::MiddleLeft);
-        //scrollTransform->get_rectTransform()->set_sizeDelta(UnityEngine::Vector2(0.0f, -20.0f));
-        //scrollTransform->set_spacing(3.0f);
+        // set sizedelta to make the textures not cut off on the sides
+        ExternalComponents* components = container->GetComponent<ExternalComponents*>();
+        RectTransform* rect = components->Get<RectTransform*>();
+        rect->set_sizeDelta({0.0f, 0.0f});
         
-        //const std::vector<std::string>& texVector = TexturePool::GetTextureVector();
+        // create wrapper to pass into the coroutine
         QuestUI::CustomDataType* wrapper = CRASH_UNLESS(il2cpp_utils::New<QuestUI::CustomDataType*, il2cpp_utils::CreationType::Manual>(classof(QuestUI::CustomDataType*)));
+        
+        // add some data to the struct that we use to get info into the coroutine
         TextureInfo* info = new TextureInfo(TexturePool::GetTextureVector(), container->get_transform());
         wrapper->data = info;
         
@@ -137,6 +133,7 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
                 TextureInfo* info = (TextureInfo*)wrapper->data;
                 if (info->index >= info->size)
                 {
+                    // we are now done, we can free the structs and custom datatype
                     free(info);
                     free(wrapper);
                     return true;
@@ -145,18 +142,22 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
                 switch(info->counter)
                 {
                     case 0:
+                        // create the horizontal layout, set it's spacing and add a background
                         info->layout = BeatSaberUI::CreateHorizontalLayoutGroup(info->container);
                         info->layout->set_spacing(3.0f);
                         info->layoutTransform = info->layout->get_transform();
                         info->layout->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha(il2cpp_utils::createcsstr("round-rect-panel"), 0.5f);
                         break;
                     case 1:
+                        // add the image to the UI
                         AddImageToLayout(info->layoutTransform, info->texVector[info->index]);
                         break;
                     case 2:
+                        // add the toggle to the UI to use an image
                         AddToggleToLayout(info->layoutTransform, info->texVector[info->index]);
                         break;
                     default:
+                        // reset counter, up the index by 1
                         info->counter = 0;
                         info->index++;
                         return false;
@@ -166,44 +167,6 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
             }));
 
         UnityEngine::MonoBehaviour::StartCoroutine(reinterpret_cast<System::Collections::IEnumerator*>(coroutine));
-        /*
-        for (auto& name : texVector)
-        {
-            getLogger().info("Adding texture %s to the UI", name.c_str());
-            QuestUI::CustomDataType* wrapper = CRASH_UNLESS(il2cpp_utils::New<QuestUI::CustomDataType*, il2cpp_utils::CreationType::Manual>(classof(QuestUI::CustomDataType*)));
-            TextureInfo* info = new TextureInfo(name, container->get_transform());
-            wrapper->data = info;
-            
-            
-            auto coroutine = UnityEngine::WaitUntil::New_ctor(il2cpp_utils::MakeDelegate<System::Func_1<bool>*>(classof(System::Func_1<bool>*), wrapper,
-            +[](QuestUI::CustomDataType* wrapper){
-                TextureInfo* info = (TextureInfo*)wrapper->data;
-                switch(info->counter)
-                {
-                    case 0:
-                        info->layout = BeatSaberUI::CreateHorizontalLayoutGroup(info->container);
-                        info->layout->set_spacing(3.0f);
-                        info->layoutTransform = info->layout->get_transform();
-                        info->layout->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha(il2cpp_utils::createcsstr("round-rect-panel"), 0.5f);
-                        break;
-                    case 1:
-                        AddImageToLayout(info->layoutTransform, info->name);
-                        break;
-                    case 2:
-                        AddToggleToLayout(info->layoutTransform, info->name);
-                        break;
-                    default:
-                        free(info);
-                        return true;
-                }
-                info->counter++;
-                return false;
-            }));
-
-            UnityEngine::MonoBehaviour::StartCoroutine(reinterpret_cast<System::Collections::IEnumerator*>(coroutine));
-            
-        }
-        */
     }
 }
 

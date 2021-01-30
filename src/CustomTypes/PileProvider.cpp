@@ -6,6 +6,7 @@
 #include "UnityEngine/WaitUntil.hpp"
 #include "UnityEngine/Transform.hpp"
 #include "UnityEngine/Coroutine.hpp"
+#include "UnityEngine/AssetBundle.hpp"
 #include "System/Collections/IEnumerator.hpp"
 #include "System/Func_1.hpp"
 
@@ -23,15 +24,20 @@ namespace MenuPillow
 {
     void PileProvider::LoadBundle(bool alsoLoadAssets)
     {
+        if (bundleLoading) return;
+        // make sure we can stop any other calls to this method from loading the bundle more than once
         bundleLoading = true;
         bs_utils::AssetBundle::LoadFromFileAsync(PILLOWPATH, [&](bs_utils::AssetBundle* bundle){
             PileProvider::bundle = bundle;
             if (PileProvider::bundle) getLogger().info("Bundle Loaded!");
-            else getLogger().info("Loaded bundle was nullptr");
+            else getLogger().error("Loaded bundle was nullptr");
+
             bundleLoading = false;
         });
+
         if (alsoLoadAssets)
         {
+            // wait for bundle to finish loading
             Updater::Construct();
             std::thread assetLoader([&]{
                 while (bundleLoading) usleep(1000);
@@ -45,6 +51,7 @@ namespace MenuPillow
 
     void PileProvider::ManualUpdate()
     {
+        // if bundle finished, load assets from it
         if (doLoadAssets)
         {
             doLoadAssets = false;
@@ -77,11 +84,14 @@ namespace MenuPillow
             getLogger().error("Loaded asset was nullptr, aborting asset load");
             return;
         }
-
+        // instantiate new of the loaded object so it's mine to keep
         PileProvider::container = UnityEngine::Object::Instantiate(container);
         UnityEngine::Object::DontDestroyOnLoad(PileProvider::container);
+        
+        // make it invisible
         PileProvider::container->SetActive(false);
 
+        // for each child
         PileProvider::childCount = PileProvider::container->get_transform()->get_childCount();
         PileProvider::childIndex = 0;
 
@@ -89,6 +99,7 @@ namespace MenuPillow
         +[]{
             if (PileProvider::childIndex >= PileProvider::childCount)
             {
+                // we done with each child
                 return true;
             } 
             UnityEngine::Transform* child = PileProvider::container->get_transform()->GetChild(PileProvider::childIndex);
@@ -99,14 +110,21 @@ namespace MenuPillow
         }));
 
         UnityEngine::MonoBehaviour::StartCoroutine(reinterpret_cast<System::Collections::IEnumerator*>(coroutine));
+        // unload bundle
+        ((UnityEngine::AssetBundle*)this->bundle)->Unload(false);
     }
 
     Pile* PileProvider::GetPile(int index)
     {
+        // if none loaded return nullptr
         if (!piles.size()) return nullptr;
+        // if no index given we want a random pile
         if (index < 0) index = rand();
+        //make sure index falls within bounds
         index %= piles.size();
+        // instantiate the pile
         UnityEngine::GameObject* newPile = UnityEngine::Object::Instantiate(piles[index]->get_gameObject());
+        // return it's pile component
         return newPile->GetComponent<Pile*>();
     }
 }

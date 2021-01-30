@@ -32,30 +32,3 @@ DECLARE_CLASS_CODEGEN(MenuPillow, PileProvider, UnityEngine::MonoBehaviour,
         REGISTER_METHOD(OnAssetLoadComplete);
     )
 )
-
-/*
-namespace MenuPillow
-{
-    class PillowProvider
-    {
-        public:
-            void LoadBundle(bool alsoLoadAssets = false);
-            void LoadAssets();
-            Pillow* GetPillow(int index = -1);
-
-        private:
-            void OnAssetLoadComplete(UnityEngine::GameObject* pillowContainer);
-            
-            UnityEngine::GameObject* container;
-
-            bs_utils::AssetBundle* bundle;
-            std::vector<Pillow*> pillows;
-
-            bool bundleLoading = false;
-            bool loadingAssets = false;
-
-            int childIndex = 0;
-            int childCount = 0;
-    };
-}
-*/
