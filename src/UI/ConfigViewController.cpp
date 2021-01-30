@@ -76,11 +76,13 @@ namespace MenuPillow
                     else PillowManager::OnModDisable();
                     SaveConfig();
             }));
-            int maxSize = constellationNames.size() - 1;
-            IncrementSetting* constellationSwitcher = BeatSaberUI::CreateIncrementSetting(layout->get_transform(), "Constellation", 0, 1.0f, active, 0, maxSize, nullptr);
+            IncrementSetting* constellationSwitcher = BeatSaberUI::CreateIncrementSetting(layout->get_transform(), "Constellation", 0, 1.0f, active, nullptr);
             constellationSwitcher->OnValueChange = il2cpp_utils::MakeDelegate<UnityAction_1<float>*>(classof(UnityAction_1<float>*), constellationSwitcher, 
                 +[](IncrementSetting* switcher, float value) {
                     int index = (int)value;
+                    int max = constellationNames.size() - 1;
+                    if (index < 0) index = max;
+                    index %= (max + 1);
                     Il2CppString* name = constellationNames[index];
                     switcher->Text->SetText(name);
                     std::string constellation = to_utf8(csstrtostr(name));

@@ -4,9 +4,9 @@
 #include "beatsaber-hook/shared/config/config-utils.hpp"
 
 struct config_t{
-    std::string lastActiveConstellation = "simple";
+    std::string lastActiveConstellation = "default";
     std::vector<std::string> lastActiveTextures = {"Cubes.png"};
-    bool enabled;
+    bool enabled = true;
 };
 
 Configuration& getConfig();

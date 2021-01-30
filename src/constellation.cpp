@@ -8,9 +8,7 @@ namespace MenuPillow
 {
     Constellation Constellation::ConstellationFromFilePath(std::string filePath)
     {
-        getLogger().info("found constellation @ %s:", filePath.c_str());
         std::string json = readfile(filePath);
-        getLogger().info("%s", json.c_str());
         rapidjson::Document d;
         d.Parse(json.c_str());
 
@@ -31,7 +29,9 @@ namespace MenuPillow
 
         for (auto& name : fileNames)
         {
-            Constellation temp = ConstellationFromFilePath(string_format("%s%s", folderPath.c_str(), name.c_str()));
+            std::string path = string_format("%s%s", folderPath.c_str(), name.c_str());
+            if (!fileexists(path.c_str())) continue;
+            Constellation temp = ConstellationFromFilePath(path);
             constellations.push_back(temp);
         }
         return constellations;

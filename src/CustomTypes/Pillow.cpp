@@ -7,6 +7,7 @@
 #include "static-defines.hpp"
 
 #include "questui/shared/BeatSaberUI.hpp"
+#include "FileUtils.hpp"
 
 DEFINE_CLASS(MenuPillow::Pillow);
 
@@ -28,7 +29,7 @@ namespace MenuPillow
     void Pillow::InitFromName(std::string texName)
     {
         std::string imagePath = IMAGEPATH + texName;
-        Sprite* sprite = QuestUI::BeatSaberUI::FileToSprite(imagePath, 474, 1012);
+        Sprite* sprite = FileUtils::FileToSprite(imagePath, 474, 1012);
         SkinnedMeshRenderer* renderer = GetComponent<SkinnedMeshRenderer*>();
         Material* mat = renderer->get_material();
         if (!mainTex) mainTex = il2cpp_utils::createcsstr("_mainTex", il2cpp_utils::StringType::Manual);

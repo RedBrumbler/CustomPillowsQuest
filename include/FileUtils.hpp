@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "UnityEngine/Texture2D.hpp"
+#include "UnityEngine/Sprite.hpp"
 
 class FileUtils
 {
@@ -11,6 +11,8 @@ class FileUtils
         static std::string getFileName(std::string filePath);
         static std::string getFolderName(std::string filePath);
         static std::string RemoveExtension(std::string fileName);
+        
 
-        static UnityEngine::Texture2D* TextureFromFile(std::string filePath, int width, int height);
+        // used in pillow init and in menu
+        static UnityEngine::Sprite* FileToSprite(std::string filePath, int width, int height);
 };

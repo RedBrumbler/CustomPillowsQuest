@@ -51,9 +51,8 @@ extern Logger& getLogger();
 void AddImageToLayout(Transform* layout, std::string name)
 {
     std::string imagePath = IMAGEPATH + name;
-    getLogger().info("Getting sprite from path %s", imagePath.c_str());
     if (!fileexists(imagePath)) return;
-    Sprite* sprite = BeatSaberUI::FileToSprite(imagePath, 474, 1012);
+    Sprite* sprite = FileUtils::FileToSprite(imagePath, 474, 1012);
     //Sprite* sprite = Sprite::Create(tex, UnityEngine::Rect(0.0f, 0.0f, (float)474, (float)1012), UnityEngine::Vector2(0.5f,0.5f), 1024.0f, 1u, SpriteMeshType::FullRect, UnityEngine::Vector4(0.0f, 0.0f, 0.0f, 0.0f), false);
     if (!sprite) return;
 
@@ -90,16 +89,22 @@ void AddToggleToLayout(Transform* layout, std::string name)
 }
 
 struct TextureInfo{
-    std::string name;
+    const std::vector<std::string>& texVector;
     int counter;
+    int index;
+    int size;
     HorizontalLayoutGroup* layout;
     Transform* layoutTransform;
     Transform* container;
-    TextureInfo(std::string name, Transform* container)
+
+    TextureInfo(const std::vector<std::string>& texVector, Transform* container) : texVector(texVector)
     {
-        this->name = name;
+        //this->texVector = texVector;
         counter = 0;
+        index = 0;
+        size = this->texVector.size();
         layout = nullptr;
+        layoutTransform = nullptr;
         this->container = container;
     }
 };
@@ -122,14 +127,54 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
         //scrollTransform->get_rectTransform()->set_sizeDelta(UnityEngine::Vector2(0.0f, -20.0f));
         //scrollTransform->set_spacing(3.0f);
         
-        const std::vector<std::string>& texVector = TexturePool::GetTextureVector();
+        //const std::vector<std::string>& texVector = TexturePool::GetTextureVector();
+        QuestUI::CustomDataType* wrapper = CRASH_UNLESS(il2cpp_utils::New<QuestUI::CustomDataType*, il2cpp_utils::CreationType::Manual>(classof(QuestUI::CustomDataType*)));
+        TextureInfo* info = new TextureInfo(TexturePool::GetTextureVector(), container->get_transform());
+        wrapper->data = info;
+        
+        auto coroutine = UnityEngine::WaitUntil::New_ctor(il2cpp_utils::MakeDelegate<System::Func_1<bool>*>(classof(System::Func_1<bool>*), wrapper,
+            +[](QuestUI::CustomDataType* wrapper){
+                TextureInfo* info = (TextureInfo*)wrapper->data;
+                if (info->index >= info->size)
+                {
+                    free(info);
+                    free(wrapper);
+                    return true;
+                }
 
+                switch(info->counter)
+                {
+                    case 0:
+                        info->layout = BeatSaberUI::CreateHorizontalLayoutGroup(info->container);
+                        info->layout->set_spacing(3.0f);
+                        info->layoutTransform = info->layout->get_transform();
+                        info->layout->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha(il2cpp_utils::createcsstr("round-rect-panel"), 0.5f);
+                        break;
+                    case 1:
+                        AddImageToLayout(info->layoutTransform, info->texVector[info->index]);
+                        break;
+                    case 2:
+                        AddToggleToLayout(info->layoutTransform, info->texVector[info->index]);
+                        break;
+                    default:
+                        info->counter = 0;
+                        info->index++;
+                        return false;
+                }
+                info->counter++;
+                return false;
+            }));
+
+        UnityEngine::MonoBehaviour::StartCoroutine(reinterpret_cast<System::Collections::IEnumerator*>(coroutine));
+        /*
         for (auto& name : texVector)
         {
             getLogger().info("Adding texture %s to the UI", name.c_str());
             QuestUI::CustomDataType* wrapper = CRASH_UNLESS(il2cpp_utils::New<QuestUI::CustomDataType*, il2cpp_utils::CreationType::Manual>(classof(QuestUI::CustomDataType*)));
             TextureInfo* info = new TextureInfo(name, container->get_transform());
             wrapper->data = info;
+            
+            
             auto coroutine = UnityEngine::WaitUntil::New_ctor(il2cpp_utils::MakeDelegate<System::Func_1<bool>*>(classof(System::Func_1<bool>*), wrapper,
             +[](QuestUI::CustomDataType* wrapper){
                 TextureInfo* info = (TextureInfo*)wrapper->data;
@@ -140,8 +185,6 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
                         info->layout->set_spacing(3.0f);
                         info->layoutTransform = info->layout->get_transform();
                         info->layout->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha(il2cpp_utils::createcsstr("round-rect-panel"), 0.5f);
-                        //info->layout->set_childForceExpandWidth(false);
-                        //info->layout->set_childControlWidth(false);
                         break;
                     case 1:
                         AddImageToLayout(info->layoutTransform, info->name);
@@ -160,6 +203,7 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
             UnityEngine::MonoBehaviour::StartCoroutine(reinterpret_cast<System::Collections::IEnumerator*>(coroutine));
             
         }
+        */
     }
 }
 

@@ -25,6 +25,8 @@
 
 #include "static-defines.hpp"
 
+#include "GlobalNamespace/MultiplayerModeSelectionViewController.hpp"
+
 ModInfo modInfo;
 
 bool getSceneName(UnityEngine::SceneManagement::Scene scene, std::string& output);
@@ -50,7 +52,7 @@ void makeFolder(std::string directory)
         }
     }
 }
-
+bool multi = false;
 bool firstWarmup = true;
 MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManagement::Scene scene)
 {
@@ -69,12 +71,17 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManage
         PileProvider::LoadBundle(true);
     }
 
-    if (activeSceneName == "MenuViewControllers" || activeSceneName == "MenuCore")
+    if (!multi && (activeSceneName == "MenuViewControllers" || activeSceneName == "MenuCore"))
     {
         PillowManager::OnMenuSceneActivate();
     }
     else PillowManager::OnMenuSceneDeActivate();
     return SceneManager_SetActiveScene(scene);
+}
+
+MAKE_HOOK_OFFSETLESS(MultiPlayerModeSelectionViewController_DidActivate, void, )
+{
+
 }
 
 void CopyDefaults()
@@ -113,8 +120,8 @@ void CopyDefaults()
         }
 
     }
-    std::string source = string_format("%s%s", MODPATH, "container.pillows");
-    if (!fileexists(PILLOWPATH)) writefile(PILLOWPATH, readfile(source));
+    //std::string source = string_format("%s%s", MODPATH, "container.pillows");
+    //if (!fileexists(PILLOWPATH)) writefile(PILLOWPATH, readfile(source));
     
 }
 
@@ -135,7 +142,7 @@ extern "C" void load()
             SaveConfig();
     std::string datapath = bs_utils::getDataDir(modInfo);
 
-    CopyDefaults();
+    //CopyDefaults();
 
     LoggerContextObject logger = getLogger().WithContext("load");
     logger.info("Persistent data path: %s", datapath.c_str());
@@ -144,7 +151,7 @@ extern "C" void load()
     custom_types::Register::RegisterTypes<MenuPillow::PillowManager, MenuPillow::PileProvider>();
     custom_types::Register::RegisterTypes<MenuPillow::MenuPillowFlowCoordinator, MenuPillow::ConfigViewController, MenuPillow::TextureSelectorViewController>();
 
-    QuestUI::Register::RegisterModSettingsFlowCoordinator<MenuPillow::MenuPillowFlowCoordinator*>((ModInfo){"Custom Pillows Quest", ID});
+    QuestUI::Register::RegisterModSettingsFlowCoordinator<MenuPillow::MenuPillowFlowCoordinator*>((ModInfo){"Custom Pillows", ID});
 }
 
 bool getSceneName(UnityEngine::SceneManagement::Scene scene, std::string& output)

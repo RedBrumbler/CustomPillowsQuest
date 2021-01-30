@@ -1,6 +1,6 @@
 {
-	"name": "busy",
-	"params": [
+	"constellationName": "busy",
+	"piles": [
 		{
 			"type": 3,
 			"pos": {
