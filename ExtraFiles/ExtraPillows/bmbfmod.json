@@ -1,0 +1,46 @@
+{
+  "id": "CustomPillowsExtraTextures",
+  "name": "Custom Pillows Extra Textures",
+  "version": "1.0.0",
+  "icon": "cover.png",
+  "coverImageFilename": "cover.png",
+  "author": "RedBrumbler",
+  "description": [
+    "Extra textures for the custom pillows mod"
+  ],
+  "category": "Gameplay",
+  "gameVersion": "1.13.2",
+  "platform": "Quest",
+  "components": [
+    {
+      "type": "FileCopyMod",
+      "sourceFileName": "BeatTogether.png",
+      "targetRootedPathAndFileName": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest/images/BeatTogether.png"
+    },
+    {
+      "type": "FileCopyMod",
+      "sourceFileName": "Qosmetics.png",
+      "targetRootedPathAndFileName": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest/images/Qosmetics.png"
+    },
+    {
+      "type": "FileCopyMod",
+      "sourceFileName": "Qounters-.png",
+      "targetRootedPathAndFileName": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest/images/Qounters-.png"
+    },
+    {
+      "type": "FileCopyMod",
+      "sourceFileName": "Quest2.png",
+      "targetRootedPathAndFileName": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest/images/Quest2.png"
+    },
+    {
+      "type": "FileCopyMod",
+      "sourceFileName": "ScoreSaber.png",
+      "targetRootedPathAndFileName": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest/images/ScoreSaber.png"
+    },
+    {
+      "type": "FileCopyMod",
+      "sourceFileName": "DiscordRichPresence.png",
+      "targetRootedPathAndFileName": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest/images/DiscordRichPresence.png"
+    }
+  ]
+}
