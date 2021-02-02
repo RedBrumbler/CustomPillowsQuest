@@ -15,7 +15,7 @@ using namespace UnityEngine;
 
 static Il2CppString* mainTex = nullptr;
 extern Logger& getLogger();
-
+int id = 0;
 namespace MenuPillow
 {
     // not really used
@@ -33,14 +33,14 @@ namespace MenuPillow
         // get path
         std::string imagePath = IMAGEPATH + texName;
         // get sprite
-        Sprite* sprite = FileUtils::FileToSprite(imagePath, 474, 1012);
+        Texture2D* tex = FileUtils::FileToTexture(imagePath);
         // get renderer & mat
         SkinnedMeshRenderer* renderer = GetComponent<SkinnedMeshRenderer*>();
         Material* mat = renderer->get_material();
         if (!mainTex) mainTex = il2cpp_utils::createcsstr("_mainTex", il2cpp_utils::StringType::Manual);
+        if (!id) id = Shader::PropertyToID(mainTex);
         // set main tex
-        mat->SetTexture(mainTex, sprite->get_texture());
-        // destroy sprite
-        Object::Destroy(sprite);
+        Object::Destroy(mat->GetTexture(id));
+        mat->SetTexture(mainTex, tex);
     }
 }

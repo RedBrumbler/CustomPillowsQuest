@@ -67,7 +67,7 @@ namespace MenuPillow
         }
         std::vector<std::string> fileNames;
 
-        FileUtils::getFileNamesInDir("png", IMAGEPATH, fileNames);
+        FileUtils::getFileNamesInDir("", IMAGEPATH, fileNames);
 
         for (auto name : fileNames)
         {

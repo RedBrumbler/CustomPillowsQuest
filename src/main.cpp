@@ -24,7 +24,7 @@
 #include "bs-utils/shared/utils.hpp"
 
 #include "static-defines.hpp"
-#include "GlobalNamespace/MainMenuViewController.hpp"
+#include "GlobalNamespace/MainFlowCoordinator.hpp"
 
 
 ModInfo modInfo;
@@ -62,8 +62,8 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManage
     {
         // get all tex names
         TexturePool::LoadAllTextures();
+        PillowManager::LoadConstellations();
         // load bundle & assets right in one go
-        PileProvider::LoadBundle(true);
     }
 
     if (!multi && (activeSceneName == "MenuViewControllers" || activeSceneName == "MenuCore"))
@@ -74,42 +74,16 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManage
     return SceneManager_SetActiveScene(scene);
 }
 
-void CopyDefaults()
+MAKE_HOOK_OFFSETLESS(MainFlowCoordinator_DidActivate, void, GlobalNamespace::MainFlowCoordinator* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 {
-    makeFolder(CONSTELLATIONPATH);
-    makeFolder(IMAGEPATH);
+    MainFlowCoordinator_DidActivate(self, firstActivation, addedToHierarchy, screenSystemEnabling);
 
-    std::string constellationPath = CONSTELLATIONPATH;
-    std::string imagePath = IMAGEPATH;
-    std::vector<std::string> fileNames = {};
-    getLogger().info("Possibly copying defaults from %s", MODPATH);
-    if (FileUtils::getFileNamesInDir("png", MODPATH, fileNames))
-    {
-        for (auto name : fileNames)
-        {
-            if (name.find("cover") != std::string::npos) continue;
-            std::string destination = imagePath + name;
-            if (fileexists(destination.c_str())) continue;
-            std::string source = MODPATH + name;
-            getLogger().info("Copying %s to %s", source.c_str(), destination.c_str());
-            writefile(destination.c_str(), readfile(source.c_str()));
-        }
-    }
-    fileNames.clear();
-
-    if (FileUtils::getFileNamesInDir("json", MODPATH, fileNames))
-    {
-        for (auto name : fileNames)
-        {
-            if (name.find("bmbfmod") != std::string::npos) continue;
-            std::string destination = constellationPath + name;
-            if (fileexists(destination.c_str())) continue;
-            std::string source = MODPATH + name;
-            getLogger().info("Copying %s to %s", source.c_str(), destination.c_str());
-            writefile(destination.c_str(), readfile(source.c_str()));
-        }
-
-    }
+    PillowManager* manager = UnityEngine::Object::FindObjectOfType<PillowManager*>();
+    if (manager) return;
+    
+    UnityEngine::GameObject* newObj = UnityEngine::GameObject::New_ctor();
+    UnityEngine::Object::DontDestroyOnLoad(newObj);
+    manager = newObj->AddComponent<PillowManager*>();
 }
 
 extern "C" void setup(ModInfo info)
@@ -138,6 +112,7 @@ extern "C" void load()
 
     // installing hooks
     INSTALL_HOOK_OFFSETLESS(logger, SceneManager_SetActiveScene, il2cpp_utils::FindMethodUnsafe("UnityEngine.SceneManagement", "SceneManager", "SetActiveScene", 1));
+    INSTALL_HOOK_OFFSETLESS(logger, MainFlowCoordinator_DidActivate, il2cpp_utils::FindMethodUnsafe("", "MainFlowCoordinator", "DidActivate", 3));
 
     logger.info("Installed Hooks!");
 

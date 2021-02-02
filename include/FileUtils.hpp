@@ -14,5 +14,6 @@ class FileUtils
         
 
         // used in pillow init and in menu
-        static UnityEngine::Sprite* FileToSprite(std::string filePath, int width, int height);
+        static UnityEngine::Sprite* FileToSprite(std::string filePath);
+        static UnityEngine::Texture2D* FileToTexture(std::string filePath);
 };

@@ -96,10 +96,11 @@ namespace MenuPillow
         PileProvider::childIndex = 0;
 
         auto coroutine = UnityEngine::WaitUntil::New_ctor(il2cpp_utils::MakeDelegate<System::Func_1<bool>*>(classof(System::Func_1<bool>*), (Il2CppObject*)nullptr,
-        +[]{
+        +[](){
             if (PileProvider::childIndex >= PileProvider::childCount)
             {
                 // we done with each child
+                PileProvider::callback();
                 return true;
             } 
             UnityEngine::Transform* child = PileProvider::container->get_transform()->GetChild(PileProvider::childIndex);

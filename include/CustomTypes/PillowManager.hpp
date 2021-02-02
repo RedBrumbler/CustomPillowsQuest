@@ -15,7 +15,7 @@ DECLARE_CLASS_CODEGEN(MenuPillow, PillowManager, UnityEngine::MonoBehaviour,
 
 
     public:
-        std::vector<MenuPillow::Constellation> constellations = {};
+        static inline std::vector<MenuPillow::Constellation> constellations = {};
         static std::vector<MenuPillow::Constellation>* GetConstellations();
         UnityEngine::Transform* SpawnPile(pillowparams param);
         bool useSaved = false;
@@ -24,7 +24,7 @@ DECLARE_CLASS_CODEGEN(MenuPillow, PillowManager, UnityEngine::MonoBehaviour,
         
         void SetActiveConstellation(Constellation constellation);
         void SetActiveConstellation(std::string name);
-        void LoadConstellations();
+        static void LoadConstellations();
         static void RandomizeTextures();
         
         static void OnModEnable();

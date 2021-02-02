@@ -18,12 +18,7 @@ namespace MenuPillow
     void PillowManager::OnMenuSceneActivate()
     {
         PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
-        if (!manager)
-        {
-            GameObject* newObj = GameObject::New_ctor();
-            Object::DontDestroyOnLoad(newObj);
-            manager = newObj->AddComponent<PillowManager*>();
-        }
+        if (!manager) return;
         manager->get_gameObject()->SetActive(true);
     }
 
@@ -37,13 +32,19 @@ namespace MenuPillow
     void PillowManager::Awake()
     {
         TexturePool::LoadAllTextures();
-        LoadConstellations();
-        SetActiveConstellation(config.lastActiveConstellation);
+        //LoadConstellations();
+                
+        if (!(PileProvider::get_pilesize() > 0)) 
+        {
+            PileProvider::LoadBundle(true);
+            PileProvider::callback = [&]{ SetActiveConstellation(config.lastActiveConstellation); };
+        }
+        else SetActiveConstellation(config.lastActiveConstellation);
     }
 
     void PillowManager::LoadConstellations()
     {
-        this->constellations = Constellation::ConstellationsFromFolderPath(CONSTELLATIONPATH);
+        constellations = Constellation::ConstellationsFromFolderPath(CONSTELLATIONPATH);
     }
 
     Transform* PillowManager::SpawnPile(pillowparams param)

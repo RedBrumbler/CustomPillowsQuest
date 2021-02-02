@@ -54,7 +54,7 @@ void AddImageToLayout(Transform* layout, std::string name)
     
     // if no file, don't try to add an image
     if (!fileexists(imagePath)) return;
-    Sprite* sprite = FileUtils::FileToSprite(imagePath, 474, 1012);
+    Sprite* sprite = FileUtils::FileToSprite(imagePath);
     Button* button = BeatSaberUI::CreateUIButton(layout, "", "SettingsButton", nullptr); // no delegate needed, it's not interactable
     button->set_interactable(false);
 
