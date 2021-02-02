@@ -7,6 +7,8 @@ Custom Textures are put in the images folder at `/sdcard/ModData/com.beatgames.b
 
 Custom textures tend to have to be 1:2 aspect ratio. The textures included with the mod are 474x1012 pixels, but other sizes should work as well. The image type shouldn't matter either, but make sure that you are actually putting images in the images folder. Most commonly images will be .jpg or .png
 
+**Version 1.0.0 of the mod can only do .pngs, 1.0.1 allows any image type**
+
 ## How to add custom constellations
 
 Custom constellations are put in the constellations folder at `/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest`, this means that a possible file path for a constellation might be `/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest/constellations/example.json`
