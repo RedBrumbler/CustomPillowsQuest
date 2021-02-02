@@ -70,7 +70,10 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManage
     {
         PillowManager::OnMenuSceneActivate();
     }
-    else PillowManager::OnMenuSceneDeActivate();
+
+    if (activeSceneName == "GameCore") PillowManager::OnMenuSceneDeActivate();
+
+    getLogger().info("Found scene %s", activeSceneName.c_str());
     return SceneManager_SetActiveScene(scene);
 }
 
@@ -81,7 +84,7 @@ MAKE_HOOK_OFFSETLESS(MainFlowCoordinator_DidActivate, void, GlobalNamespace::Mai
     PillowManager* manager = UnityEngine::Object::FindObjectOfType<PillowManager*>();
     if (manager) return;
     
-    UnityEngine::GameObject* newObj = UnityEngine::GameObject::New_ctor();
+    UnityEngine::GameObject* newObj = UnityEngine::GameObject::New_ctor<il2cpp_utils::CreationType::Manual>();
     UnityEngine::Object::DontDestroyOnLoad(newObj);
     manager = newObj->AddComponent<PillowManager*>();
 }

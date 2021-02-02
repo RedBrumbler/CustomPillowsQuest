@@ -1,6 +1,7 @@
 #include "CustomTypes/PillowManager.hpp"
 #include "UnityEngine/Object.hpp"
 #include "UnityEngine/GameObject.hpp"
+#include "UnityEngine/Resources.hpp"
 #include "CustomTypes/PileProvider.hpp"
 #include "config.hpp"
 #include "TexturePool.hpp"
@@ -17,15 +18,31 @@ namespace MenuPillow
 {
     void PillowManager::OnMenuSceneActivate()
     {
-        PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
-        if (!manager) return;
+        if (!manager)
+        {
+            Array<PillowManager*>* managers = Resources::FindObjectsOfTypeAll<PillowManager*>();
+            manager = managers->values[0];
+        }
+        if (!manager) 
+        {
+            getLogger().error("Manager was nullptr");
+            return;
+        }
         manager->get_gameObject()->SetActive(true);
     }
 
     void PillowManager::OnMenuSceneDeActivate()
     {
-        PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
-        if (!manager) return;
+        if (!manager)
+        {
+            Array<PillowManager*>* managers = Resources::FindObjectsOfTypeAll<PillowManager*>();
+            manager = managers->values[0];
+        }
+        if (!manager) 
+        {
+            getLogger().error("Manager was nullptr");
+            return;
+        }
         manager->get_gameObject()->SetActive(false);
     }
 
@@ -175,5 +192,10 @@ namespace MenuPillow
             Transform* child = manager->get_transform()->GetChild(i);
             child->get_gameObject()->SetActive(false);
         }
+    }
+
+    void PillowManager::OnDestroy()
+    {
+        getLogger().info("Pillow Manager destroyed!");
     }
 }

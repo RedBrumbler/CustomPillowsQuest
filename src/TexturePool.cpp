@@ -65,6 +65,7 @@ namespace MenuPillow
             getLogger().error("Tried loading textures, but they were already loaded, aborting!");
             return;
         }
+        
         std::vector<std::string> fileNames;
 
         FileUtils::getFileNamesInDir("", IMAGEPATH, fileNames);
