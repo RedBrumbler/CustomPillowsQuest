@@ -28,12 +28,6 @@
       }
     },
     {
-      "type": "HookModLibrary",
-      "installAction": {
-        "installLibraryFile": "libbs-utils.so"
-      }
-    },
-    {
       "type": "FileCopyMod",
       "sourceFileName": "container.pillows",
       "targetRootedPathAndFileName": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest/container.pillows"

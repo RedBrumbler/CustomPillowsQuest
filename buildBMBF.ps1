@@ -10,7 +10,6 @@ if (-not ($PSVersionTable.PSEdition -eq "Core")) {
 Compress-Archive -Path  "./libs/arm64-v8a/libcustompillowsquest.so",`
                         "./bmbfmod.json",`
                         "./cover.png",`
-                        "./extern/libbs-utils.so",`
                         "./extern/libbeatsaber-hook_1_0_12.so",`
                         "./ExtraFiles/container.pillows",`
                         "./ExtraFiles/BMBF.png",`
