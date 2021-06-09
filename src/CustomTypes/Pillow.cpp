@@ -6,10 +6,12 @@
 #include "UnityEngine/Sprite.hpp"
 #include "static-defines.hpp"
 
+#include "TexturePool.hpp"
+
 #include "questui/shared/BeatSaberUI.hpp"
 #include "FileUtils.hpp"
 
-DEFINE_CLASS(MenuPillow::Pillow);
+DEFINE_TYPE(MenuPillow::Pillow);
 
 using namespace UnityEngine;
 
@@ -18,6 +20,13 @@ extern Logger& getLogger();
 int id = 0;
 namespace MenuPillow
 {
+    void Pillow::Awake()
+    {
+        std::string name = TexturePool::GetTextureName();
+        if (name != "")
+            InitFromName(name);
+    }
+
     // not really used
     void Pillow::Init(UnityEngine::Texture2D* texture)
     {

@@ -11,7 +11,7 @@ DECLARE_CLASS_CODEGEN(MenuPillow, Updater, UnityEngine::MonoBehaviour,
         static void Construct();
         static void doDestroy();
         
-    REGISTER_FUNCTION(Updater, 
+    REGISTER_FUNCTION(
         REGISTER_METHOD(Update);
     )
 )

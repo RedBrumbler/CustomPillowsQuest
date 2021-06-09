@@ -1,13 +1,13 @@
+#include "config.hpp"
 #include "CustomTypes/PillowManager.hpp"
 #include "UnityEngine/Object.hpp"
 #include "UnityEngine/GameObject.hpp"
 #include "UnityEngine/Resources.hpp"
 #include "CustomTypes/PileProvider.hpp"
-#include "config.hpp"
 #include "TexturePool.hpp"
 #include "static-defines.hpp"
 
-DEFINE_CLASS(MenuPillow::PillowManager);
+DEFINE_TYPE(MenuPillow::PillowManager);
 
 using namespace UnityEngine;
 

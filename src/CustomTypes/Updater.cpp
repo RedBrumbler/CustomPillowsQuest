@@ -3,7 +3,7 @@
 #include "UnityEngine/GameObject.hpp"
 #include "UnityEngine/Object.hpp"
 
-DEFINE_CLASS(MenuPillow::Updater);
+DEFINE_TYPE(MenuPillow::Updater);
 
 using namespace UnityEngine;
 

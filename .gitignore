@@ -5,6 +5,7 @@ qpm.shared.json
 obj/
 libs/
 *.zip
+*.qmod
 *.log
 *.backup
 *.psd

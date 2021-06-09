@@ -16,7 +16,7 @@
 
 #include "CustomTypes/Updater.hpp"
 
-DEFINE_CLASS(MenuPillow::PileProvider);
+DEFINE_TYPE(MenuPillow::PileProvider);
 
 extern Logger& getLogger();
 
@@ -27,6 +27,10 @@ namespace MenuPillow
         if (bundleLoading) return;
         // make sure we can stop any other calls to this method from loading the bundle more than once
         bundleLoading = true;
+        bundle = UnityEngine::AssetBundle::LoadFromFile(il2cpp_utils::newcsstr(PILLOWPATH));
+        bundleLoading = false;
+        
+        /*
         bs_utils::AssetBundle::LoadFromFileAsync(PILLOWPATH, [&](bs_utils::AssetBundle* bundle){
             PileProvider::bundle = bundle;
             if (PileProvider::bundle) getLogger().info("Bundle Loaded!");
@@ -34,18 +38,22 @@ namespace MenuPillow
 
             bundleLoading = false;
         });
+        */
 
         if (alsoLoadAssets)
         {
+            LoadAssets();
             // wait for bundle to finish loading
+            /*
             Updater::Construct();
             std::thread assetLoader([&]{
                 while (bundleLoading) usleep(1000);
 
                 PileProvider::doLoadAssets = true;
             });
-
-            assetLoader.detach();
+            */
+           
+            //assetLoader.detach();
         }
     }
 
@@ -69,12 +77,20 @@ namespace MenuPillow
             return;
         }
         loadingAssets = true;
+
+        UnityEngine::GameObject* obj = bundle->LoadAsset<UnityEngine::GameObject*>(il2cpp_utils::newcsstr("_Pillows"));
+        UnityEngine::GameObject* providerObj = UnityEngine::GameObject::New_ctor();
+        UnityEngine::Object::DontDestroyOnLoad(providerObj);
+        providerObj->AddComponent<PileProvider*>()->OnAssetLoadComplete(obj);
+
+        /*
         getLogger().info("Loading assets from bundle");
         bundle->LoadAssetAsync("_Pillows", [&](bs_utils::Asset* asset){
             UnityEngine::GameObject* obj = UnityEngine::GameObject::New_ctor();
             UnityEngine::Object::DontDestroyOnLoad(obj);
             obj->AddComponent<PileProvider*>()->OnAssetLoadComplete((UnityEngine::GameObject*)asset); 
         }, il2cpp_utils::GetSystemType("UnityEngine", "GameObject"));
+        */
     }
 
     void PileProvider::OnAssetLoadComplete(UnityEngine::GameObject* container)

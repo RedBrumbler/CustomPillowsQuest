@@ -1,6 +1,6 @@
 #pragma once
 
-#define PATH "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillowsQuest/"
+#define PATH "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/"
 
 #define PILLOWPATH string_format("%s%s", PATH, "container.pillows")
 #define IMAGEPATH string_format("%s%s", PATH, "images/")

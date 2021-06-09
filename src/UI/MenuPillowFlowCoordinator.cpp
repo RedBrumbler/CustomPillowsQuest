@@ -3,7 +3,7 @@
 #include "HMUI/ViewController_AnimationType.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
 
-DEFINE_CLASS(MenuPillow::MenuPillowFlowCoordinator);
+DEFINE_TYPE(MenuPillow::MenuPillowFlowCoordinator);
 
 namespace MenuPillow
 {
@@ -12,7 +12,7 @@ namespace MenuPillow
         if (firstActivation)
         {
             // set the title ofc
-            SetTitle(il2cpp_utils::createcsstr("Custom Pillows Quest"), HMUI::ViewController::AnimationType::Out);
+            SetTitle(il2cpp_utils::createcsstr("Custom Pillows"), HMUI::ViewController::AnimationType::Out);
             showBackButton = true; // we wanna go back
 
             // make the config view controller

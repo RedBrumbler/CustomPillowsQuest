@@ -1,9 +1,7 @@
 #pragma once
 
 #include "custom-types/shared/macros.hpp"
-
 #include "HMUI/FlowCoordinator.hpp"
-
 #include "custom-types/shared/macros.hpp"
 #include "UI/ConfigViewController.hpp"
 #include "UI/TextureSelectorViewController.hpp"
@@ -15,7 +13,7 @@ DECLARE_CLASS_CODEGEN(MenuPillow, MenuPillowFlowCoordinator, HMUI::FlowCoordinat
     DECLARE_INSTANCE_FIELD_DEFAULT(MenuPillow::ConfigViewController*, configViewController, nullptr);
     DECLARE_INSTANCE_FIELD_DEFAULT(MenuPillow::TextureSelectorViewController*, textureSelectorViewController, nullptr);
 
-    REGISTER_FUNCTION(MenuPillowFlowCoordinator,
+    REGISTER_FUNCTION(
         REGISTER_METHOD(DidActivate);
         REGISTER_METHOD(BackButtonWasPressed);
 

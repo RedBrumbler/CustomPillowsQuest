@@ -1,3 +1,4 @@
+#include "config.hpp"
 #include "modloader/shared/modloader.hpp"
 #include "beatsaber-hook/shared/utils/logging.hpp"
 #include "custom-types/shared/register.hpp"
@@ -14,7 +15,6 @@
 #include "UI/TextureSelectorViewController.hpp"
 
 #include "TexturePool.hpp"
-#include "config.hpp"
 #include "FileUtils.hpp"
 
 #include "UnityEngine/SceneManagement/Scene.hpp"
@@ -61,12 +61,12 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManage
     if (activeSceneName == "HealthWarning")
     {
         // get all tex names
-        TexturePool::LoadAllTextures();
-        PillowManager::LoadConstellations();
+        //TexturePool::LoadAllTextures();
+        //PillowManager::LoadConstellations();
         // load bundle & assets right in one go
     }
 
-    if (!multi && (activeSceneName == "MenuViewControllers" || activeSceneName == "MenuCore"))
+    if (!multi && activeSceneName == "MainMenu")
     {
         PillowManager::OnMenuSceneActivate();
     }
@@ -81,12 +81,15 @@ MAKE_HOOK_OFFSETLESS(MainFlowCoordinator_DidActivate, void, GlobalNamespace::Mai
 {
     MainFlowCoordinator_DidActivate(self, firstActivation, addedToHierarchy, screenSystemEnabling);
 
-    PillowManager* manager = UnityEngine::Object::FindObjectOfType<PillowManager*>();
-    if (manager) return;
-    
-    UnityEngine::GameObject* newObj = UnityEngine::GameObject::New_ctor<il2cpp_utils::CreationType::Manual>();
-    UnityEngine::Object::DontDestroyOnLoad(newObj);
-    manager = newObj->AddComponent<PillowManager*>();
+    if (firstActivation)
+    {
+        TexturePool::LoadAllTextures();
+        PillowManager::LoadConstellations();
+
+        UnityEngine::GameObject* newObj = UnityEngine::GameObject::New_ctor<il2cpp_utils::CreationType::Manual>();
+        UnityEngine::Object::DontDestroyOnLoad(newObj);
+        newObj->AddComponent<PillowManager*>();
+    }
 }
 
 extern "C" void setup(ModInfo info)
@@ -134,8 +137,6 @@ extern "C" void load()
 
     logger.info("Registered Flow Coordinator!");
 }
-
-
 
 bool getSceneName(UnityEngine::SceneManagement::Scene scene, std::string& output)
 {

@@ -65,7 +65,17 @@
 			"thread": "cpp",
 			"cfenv": "cpp",
 			"cinttypes": "cpp",
-			"typeinfo": "cpp"
+			"typeinfo": "cpp",
+			"ranges": "cpp",
+			"span": "cpp",
+			"bit": "cpp",
+			"compare": "cpp",
+			"concepts": "cpp",
+			"coroutine": "cpp",
+			"numeric": "cpp",
+			"random": "cpp",
+			"shared_mutex": "cpp",
+			"stop_token": "cpp"
 		}
 	}
 }

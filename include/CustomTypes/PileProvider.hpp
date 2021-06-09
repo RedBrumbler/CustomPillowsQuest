@@ -1,5 +1,5 @@
 #pragma once
-#include "bs-utils/shared/AssetBundle.hpp"
+#include "UnityEngine/AssetBundle.hpp"
 #include "CustomTypes/Pile.hpp"
 #include "UnityEngine/GameObject.hpp"
 #include <functional>
@@ -23,7 +23,7 @@ DECLARE_CLASS_CODEGEN(MenuPillow, PileProvider, UnityEngine::MonoBehaviour,
     private:
         static inline UnityEngine::GameObject* container = nullptr;
 
-        static inline bs_utils::AssetBundle* bundle = nullptr;
+        static inline UnityEngine::AssetBundle* bundle = nullptr;
         static inline std::vector<Pile*> piles = {};
 
         static inline bool bundleLoading = false;
@@ -33,7 +33,7 @@ DECLARE_CLASS_CODEGEN(MenuPillow, PileProvider, UnityEngine::MonoBehaviour,
         static inline int childIndex = 0;
         static inline int childCount = 0;
 
-    REGISTER_FUNCTION(PileProvider,
+    REGISTER_FUNCTION(
         REGISTER_METHOD(LoadBundle);
         REGISTER_METHOD(LoadAssets);
         REGISTER_METHOD(GetPile);

@@ -32,7 +32,7 @@ DECLARE_CLASS_CODEGEN(MenuPillow, PillowManager, UnityEngine::MonoBehaviour,
         static void OnModDisable();
         
         static inline PillowManager* manager = nullptr;
-    REGISTER_FUNCTION(PillowManager,
+    REGISTER_FUNCTION(
         REGISTER_METHOD(OnMenuSceneActivate);
         REGISTER_METHOD(OnMenuSceneDeActivate);
         REGISTER_METHOD(Awake);

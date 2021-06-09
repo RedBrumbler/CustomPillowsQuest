@@ -40,7 +40,7 @@ using namespace UnityEngine::UI;
 using namespace UnityEngine::Events;
 using namespace HMUI;
 
-DEFINE_CLASS(MenuPillow::ConfigViewController);
+DEFINE_TYPE(MenuPillow::ConfigViewController);
 
 static std::vector<Il2CppString*> constellationNames = {};
 
@@ -76,20 +76,19 @@ namespace MenuPillow
                 // when the active one has not been found, increase the counter
                 if (!found) active++; 
             }
+            
+            if (!found) active = 0;
 
             // should pillows show at all?
-            BeatSaberUI::CreateToggle(layout->get_transform(), "Pillows Enabled", config.enabled, il2cpp_utils::MakeDelegate<UnityAction_1<bool>*>(classof(UnityAction_1<bool>*), this,
-                +[](ConfigViewController* view, bool value) {
+            BeatSaberUI::CreateToggle(layout->get_transform(), "Pillows Enabled", config.enabled, [](bool value) {
                     config.enabled = value;
                     if (config.enabled) PillowManager::OnModEnable();
                     else PillowManager::OnModDisable();
                     SaveConfig();
-            }));
+            });
 
             // switch between the constellations with a rollback
-            IncrementSetting* constellationSwitcher = BeatSaberUI::CreateIncrementSetting(layout->get_transform(), "Constellation", 0, 1.0f, active, nullptr);
-            constellationSwitcher->OnValueChange = il2cpp_utils::MakeDelegate<UnityAction_1<float>*>(classof(UnityAction_1<float>*), constellationSwitcher, 
-                +[](IncrementSetting* switcher, float value) {
+            constellationSwitcher = BeatSaberUI::CreateIncrementSetting(layout->get_transform(), "Constellation", 0, 1.0f, active, [&](float value) {
                     // get the current value into an int for indexing
                     int index = (int)value;
                     // max is the constellationNames.size - 1
@@ -104,10 +103,10 @@ namespace MenuPillow
                     Il2CppString* name = constellationNames[index];
                     
                     // set the text
-                    switcher->Text->SetText(name);
+                    constellationSwitcher->Text->SetText(name);
                     
                     // set current val again
-                    switcher->CurrentValue = index;
+                    constellationSwitcher->CurrentValue = index;
 
                     // get the std string of the constellation name
                     std::string constellation = to_utf8(csstrtostr(name));
@@ -123,11 +122,9 @@ namespace MenuPillow
             constellationSwitcher->Text->SetText(constellationNames[active]);
             
             // Shuffle button 
-            QuestUI::BeatSaberUI::CreateUIButton(layout->get_transform(), "Shuffle", il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(classof(UnityEngine::Events::UnityAction*), (Il2CppObject*)nullptr, +[]{
+            QuestUI::BeatSaberUI::CreateUIButton(layout->get_transform(), "Shuffle", []{
                 PillowManager::RandomizeTextures();
-            }));            
-
-
+            });
         }
     }
 
