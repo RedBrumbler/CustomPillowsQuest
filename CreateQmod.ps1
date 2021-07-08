@@ -1,12 +1,10 @@
-
 $zip = $env:qmodName + ".zip"
 $qmod = $env:qmodName + ".qmod"
 
-Compress-Archive -Path  "./libs/arm64-v8a/libbeatsaber-hook_1_3_5.so",`
-                        "./extern/libbeatsaber-hook_1_3_3.so",`
+Compress-Archive -Path  "./libs/arm64-v8a/libbeatsaber-hook_2_0_3.so",`
+                        "./extern/libbeatsaber-hook_2_0_2.so",`
                         "./libs/arm64-v8a/libcustompillows.so",`
-                        "./libs/arm64-v8a/libbs-utils.so",`
-                        "./libs/arm64-v8a/libcodegen_0_9_0.so",`
+                        "./libs/arm64-v8a/libcodegen_0_10_2.so",`
                         "./libs/arm64-v8a/libquestui.so",`
                         "./libs/arm64-v8a/libcustom-types.so",`
                         "./cover.png",`
