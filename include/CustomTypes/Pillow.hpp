@@ -5,13 +5,8 @@
 #include "UnityEngine/Texture2D.hpp"
 
 DECLARE_CLASS_CODEGEN(MenuPillow, Pillow, UnityEngine::MonoBehaviour, 
-    DECLARE_METHOD(void, Awake);
-    DECLARE_METHOD(void, Init, UnityEngine::Texture2D* texture);
+    DECLARE_INSTANCE_METHOD(void, Awake);
+    DECLARE_INSTANCE_METHOD(void, Init, UnityEngine::Texture2D* texture);
     public:
         void InitFromName(std::string texName);
-
-    REGISTER_FUNCTION(
-        REGISTER_METHOD(Awake);
-        REGISTER_METHOD(Init);
-    )
 )

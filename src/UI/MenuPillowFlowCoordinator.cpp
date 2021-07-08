@@ -3,7 +3,7 @@
 #include "HMUI/ViewController_AnimationType.hpp"
 #include "questui/shared/BeatSaberUI.hpp"
 
-DEFINE_TYPE(MenuPillow::MenuPillowFlowCoordinator);
+DEFINE_TYPE(MenuPillow, MenuPillowFlowCoordinator);
 
 namespace MenuPillow
 {

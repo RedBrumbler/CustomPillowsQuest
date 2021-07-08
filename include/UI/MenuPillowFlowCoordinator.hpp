@@ -12,12 +12,4 @@ DECLARE_CLASS_CODEGEN(MenuPillow, MenuPillowFlowCoordinator, HMUI::FlowCoordinat
     
     DECLARE_INSTANCE_FIELD_DEFAULT(MenuPillow::ConfigViewController*, configViewController, nullptr);
     DECLARE_INSTANCE_FIELD_DEFAULT(MenuPillow::TextureSelectorViewController*, textureSelectorViewController, nullptr);
-
-    REGISTER_FUNCTION(
-        REGISTER_METHOD(DidActivate);
-        REGISTER_METHOD(BackButtonWasPressed);
-
-        REGISTER_FIELD(configViewController);
-        REGISTER_FIELD(textureSelectorViewController);
-    )
 )

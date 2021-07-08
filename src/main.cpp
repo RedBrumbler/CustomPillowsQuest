@@ -1,8 +1,8 @@
 #include "config.hpp"
 #include "modloader/shared/modloader.hpp"
 #include "beatsaber-hook/shared/utils/logging.hpp"
+#include "beatsaber-hook/shared/utils/hooking.hpp"
 #include "custom-types/shared/register.hpp"
-#include "custom-types/shared/macros.hpp"
 
 #include "CustomTypes/Pillow.hpp"
 #include "CustomTypes/PillowManager.hpp"
@@ -20,8 +20,6 @@
 #include "UnityEngine/SceneManagement/Scene.hpp"
 
 #include "questui/shared/QuestUI.hpp"
-
-#include "bs-utils/shared/utils.hpp"
 
 #include "static-defines.hpp"
 #include "GlobalNamespace/MainFlowCoordinator.hpp"
@@ -52,9 +50,13 @@ void makeFolder(std::string directory)
         }
     }
 }
+
+#include "UnityEngine/SceneManagement/SceneManager.hpp"
+
 bool multi = false;
 bool firstWarmup = true;
-MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManagement::Scene scene)
+
+MAKE_HOOK_MATCH(SceneManager_SetActiveScene, &UnityEngine::SceneManagement::SceneManager::SetActiveScene, bool, UnityEngine::SceneManagement::Scene scene)
 {
     getSceneName(scene, activeSceneName);
 
@@ -77,7 +79,7 @@ MAKE_HOOK_OFFSETLESS(SceneManager_SetActiveScene, bool, UnityEngine::SceneManage
     return SceneManager_SetActiveScene(scene);
 }
 
-MAKE_HOOK_OFFSETLESS(MainFlowCoordinator_DidActivate, void, GlobalNamespace::MainFlowCoordinator* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+MAKE_HOOK_MATCH(MainFlowCoordinator_DidActivate, &GlobalNamespace::MainFlowCoordinator::DidActivate, void, GlobalNamespace::MainFlowCoordinator* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 {
     MainFlowCoordinator_DidActivate(self, firstActivation, addedToHierarchy, screenSystemEnabling);
 
@@ -109,7 +111,6 @@ extern "C" void load()
 
     if (!LoadConfig()) 
             SaveConfig();
-    std::string datapath = bs_utils::getDataDir(modInfo);
 
     //CopyDefaults();
 
@@ -117,17 +118,15 @@ extern "C" void load()
     logger.info("Installing Hooks...");
 
     // installing hooks
-    INSTALL_HOOK_OFFSETLESS(logger, SceneManager_SetActiveScene, il2cpp_utils::FindMethodUnsafe("UnityEngine.SceneManagement", "SceneManager", "SetActiveScene", 1));
-    INSTALL_HOOK_OFFSETLESS(logger, MainFlowCoordinator_DidActivate, il2cpp_utils::FindMethodUnsafe("", "MainFlowCoordinator", "DidActivate", 3));
+    INSTALL_HOOK(logger, SceneManager_SetActiveScene);
+    INSTALL_HOOK(logger, MainFlowCoordinator_DidActivate);
 
     logger.info("Installed Hooks!");
 
     logger.info("Registering Types...");
 
     // register custom types
-    custom_types::Register::RegisterTypes<MenuPillow::Pillow, MenuPillow::Updater, MenuPillow::Pile>();
-    custom_types::Register::RegisterTypes<MenuPillow::PillowManager, MenuPillow::PileProvider>();
-    custom_types::Register::RegisterTypes<MenuPillow::MenuPillowFlowCoordinator, MenuPillow::ConfigViewController, MenuPillow::TextureSelectorViewController>();
+    custom_types::Register::AutoRegister();
 
     logger.info("Registered Types!");
 

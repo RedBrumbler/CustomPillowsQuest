@@ -8,11 +8,11 @@
 #include <string>
 
 DECLARE_CLASS_CODEGEN(MenuPillow, PillowManager, UnityEngine::MonoBehaviour,
-    DECLARE_METHOD(static void, OnMenuSceneActivate);
-    DECLARE_METHOD(static void, OnMenuSceneDeActivate);
-    DECLARE_METHOD(void, Awake);
-    DECLARE_METHOD(void, OnDestroy);
-    DECLARE_METHOD(void, RemoveLastPillow);
+    DECLARE_STATIC_METHOD(void, OnMenuSceneActivate);
+    DECLARE_STATIC_METHOD(void, OnMenuSceneDeActivate);
+    DECLARE_INSTANCE_METHOD(void, Awake);
+    DECLARE_INSTANCE_METHOD(void, OnDestroy);
+    DECLARE_INSTANCE_METHOD(void, RemoveLastPillow);
 
 
     public:
@@ -32,11 +32,4 @@ DECLARE_CLASS_CODEGEN(MenuPillow, PillowManager, UnityEngine::MonoBehaviour,
         static void OnModDisable();
         
         static inline PillowManager* manager = nullptr;
-    REGISTER_FUNCTION(
-        REGISTER_METHOD(OnMenuSceneActivate);
-        REGISTER_METHOD(OnMenuSceneDeActivate);
-        REGISTER_METHOD(Awake);
-        REGISTER_METHOD(OnDestroy);
-        REGISTER_METHOD(RemoveLastPillow);
-    )
 )

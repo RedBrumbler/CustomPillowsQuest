@@ -11,7 +11,7 @@
 #include "questui/shared/BeatSaberUI.hpp"
 #include "FileUtils.hpp"
 
-DEFINE_TYPE(MenuPillow::Pillow);
+DEFINE_TYPE(MenuPillow, Pillow);
 
 using namespace UnityEngine;
 

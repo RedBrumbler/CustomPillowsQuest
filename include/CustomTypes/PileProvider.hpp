@@ -8,11 +8,11 @@
 #include "custom-types/shared/macros.hpp"
 
 DECLARE_CLASS_CODEGEN(MenuPillow, PileProvider, UnityEngine::MonoBehaviour,
-    DECLARE_METHOD(static void, LoadBundle, bool alsoLoadAssets = false);
-    DECLARE_METHOD(static void, LoadAssets);
-    DECLARE_METHOD(static Pile*, GetPile, int index = -1);
-    DECLARE_METHOD(void, OnAssetLoadComplete, UnityEngine::GameObject* pillowContainer);
-    DECLARE_METHOD(static void, ManualUpdate);
+    DECLARE_STATIC_METHOD(void, LoadBundle, bool alsoLoadAssets = false);
+    DECLARE_STATIC_METHOD(void, LoadAssets);
+    DECLARE_STATIC_METHOD(Pile*, GetPile, int index = -1);
+    DECLARE_INSTANCE_METHOD(void, OnAssetLoadComplete, UnityEngine::GameObject* pillowContainer);
+    DECLARE_STATIC_METHOD(void, ManualUpdate);
     
     public:
         static inline std::function<void()> callback = []{};
@@ -32,11 +32,4 @@ DECLARE_CLASS_CODEGEN(MenuPillow, PileProvider, UnityEngine::MonoBehaviour,
 
         static inline int childIndex = 0;
         static inline int childCount = 0;
-
-    REGISTER_FUNCTION(
-        REGISTER_METHOD(LoadBundle);
-        REGISTER_METHOD(LoadAssets);
-        REGISTER_METHOD(GetPile);
-        REGISTER_METHOD(OnAssetLoadComplete);
-    )
 )

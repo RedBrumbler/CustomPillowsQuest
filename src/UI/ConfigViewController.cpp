@@ -40,7 +40,7 @@ using namespace UnityEngine::UI;
 using namespace UnityEngine::Events;
 using namespace HMUI;
 
-DEFINE_TYPE(MenuPillow::ConfigViewController);
+DEFINE_TYPE(MenuPillow, ConfigViewController);
 
 static std::vector<Il2CppString*> constellationNames = {};
 

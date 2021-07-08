@@ -44,7 +44,7 @@ using namespace UnityEngine::UI;
 using namespace UnityEngine::Events;
 using namespace HMUI;
 
-DEFINE_TYPE(MenuPillow::TextureSelectorViewController);
+DEFINE_TYPE(MenuPillow, TextureSelectorViewController);
 
 extern Logger& getLogger();
 

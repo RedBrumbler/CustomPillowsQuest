@@ -10,7 +10,7 @@
 
 #include "questui/shared/CustomTypes/Data/CustomDataType.hpp"
 
-DEFINE_TYPE(MenuPillow::Pile);
+DEFINE_TYPE(MenuPillow, Pile);
 
 static Il2CppString* meshName = nullptr;
 

@@ -16,7 +16,7 @@
 
 #include "CustomTypes/Updater.hpp"
 
-DEFINE_TYPE(MenuPillow::PileProvider);
+DEFINE_TYPE(MenuPillow, PileProvider);
 
 extern Logger& getLogger();
 

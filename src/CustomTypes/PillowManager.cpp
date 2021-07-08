@@ -7,7 +7,7 @@
 #include "TexturePool.hpp"
 #include "static-defines.hpp"
 
-DEFINE_TYPE(MenuPillow::PillowManager);
+DEFINE_TYPE(MenuPillow, PillowManager);
 
 using namespace UnityEngine;
 

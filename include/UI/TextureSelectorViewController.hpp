@@ -12,9 +12,4 @@ DECLARE_CLASS_CODEGEN(MenuPillow, TextureSelectorViewController, HMUI::ViewContr
 
     public:
         custom_types::Helpers::Coroutine SetupSelectionsRoutine(TextureInfo* info);
-
-    REGISTER_FUNCTION(
-        REGISTER_METHOD(DidActivate);
-        REGISTER_METHOD(DidDeactivate);
-    )
 )
