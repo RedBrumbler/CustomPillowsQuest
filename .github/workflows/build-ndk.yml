@@ -188,8 +188,8 @@ jobs:
     - name: Upload qmod artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ qmodName }}.qmod
-        path: ./${{ qmodName }}.qmod
+        name: ${{ env.qmodName }}.qmod
+        path: ./${{ env.qmodName }}.qmod
         # if not found error obviously
         if-no-files-found: error
     # TODO: Add auto-populating releases, auto update versions, auto publish package on release
