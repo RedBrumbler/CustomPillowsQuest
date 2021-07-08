@@ -21,10 +21,10 @@ on:
       - '!qpm.json'
       # ignore all .ps1 files
       - '**.ps1'
-      # dont ignore this specific file
+      # dont ignore these specific files
       - '!build.ps1'
-      # dont ignore this specific file
       - '!buildQMOD.ps1'
+      - '!CreateQmod.ps1'
       # ignore all .md files
       - '**.md'
       # ignore the gitignore file
