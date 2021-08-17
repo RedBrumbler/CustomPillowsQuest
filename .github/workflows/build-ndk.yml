@@ -23,7 +23,7 @@ on:
       - '**.ps1'
       # dont ignore these specific files
       - '!build.ps1'
-      - '!buildQMOD.ps1'
+      - '!buildQmod.ps1'
       - '!CreateQmod.ps1'
       # ignore all .md files
       - '**.md'
@@ -55,43 +55,15 @@ jobs:
     - uses: actions/checkout@v2
       name: Checkout
       with:
-        submodules: true
+        submodules: recursive
         lfs: true
-    # powershell is needed
-    - name: Install Powershell
-      run: sudo apt-get install -y powershell
-    
-    # unpack the cache to see if ndk is available on it
-    - name: Cache Android NDK
-      id: cache-ndk
-      # this step uses the actions cache
-      uses: actions/cache@v2
-      env:
-        # name of cached ndk
-        cache-name: cache-ndk
-      with:
-        path: ndk
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ env.ndkname }}
-        restore-keys: |
-          ${{ runner.os }}-${{ env.cache-name }}-${{ env.ndkname }}
-
-    - name: Install Android NDK
-      # if not available, install the ndk so we can build
-      if: steps.cache-ndk.outputs.cache-hit != 'true'
-      # if the if was true, do this:
-      run: |
-        wget -q -O ndk.zip https://dl.google.com/android/repository/${ndkname}-linux-x86_64.zip
-        unzip -q ndk.zip
-        mv ${ndkname} ndk
-      # download ndk.zip from google, unzip and move into ndk cache folder
 
       # create the ndkpath.txt file needed in our own compile scripts
     - name: Create ndkpath.txt
       run: |
-        cd ndk
-        pwd > ${GITHUB_WORKSPACE}/ndkpath.txt
+        echo "$ANDROID_NDK_LATEST_HOME" > ${GITHUB_WORKSPACE}/ndkpath.txt
+        cat ${GITHUB_WORKSPACE}/ndkpath.txt
       # just "cat" the path into the ndkpath.txt
-
 
       # qpm caching, same as ndk but unused I assume
 #     - name: Cache QPM
@@ -154,6 +126,7 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}
         pwsh -Command ./build.ps1
+
     - name: Create Qmod
       run: |
         cd ${GITHUB_WORKSPACE}
@@ -185,11 +158,11 @@ jobs:
         # if not found error obviously
         if-no-files-found: error
     # upload the qmod 
-    - name: Upload qmod artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{ env.qmodName }}.qmod
-        path: ./${{ env.qmodName }}.qmod
-        # if not found error obviously
-        if-no-files-found: error
+#    - name: Upload qmod artifact
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: ${{ env.qmodName }}.qmod
+#        path: ./${{ env.qmodName }}.qmod
+#        # if not found error obviously
+#        if-no-files-found: error
     # TODO: Add auto-populating releases, auto update versions, auto publish package on release

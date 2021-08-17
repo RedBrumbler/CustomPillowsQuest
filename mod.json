@@ -1,59 +1,53 @@
 {
-    "_QPVersion": "0.1.1",
-    "name": "Custom Pillows",
-    "id": "CustomPillows",
-    "author": "RedBrumbler",
-    "version": "1.0.3",
-    "packageId": "com.beatgames.beatsaber",
-    "packageVersion": "1.16.2",
-    "coverImage": "cover.png",
-    "description": "Custom Pillow mod for Quest\nOriginal by Toni Macaroni for PC",
-    "type": "Gameplay",
-    "dependencies": [
-    ],
-	"modFiles": [
-		"libcustompillows.so"
-    ],
-    "libraryFiles": [
-        "libbeatsaber-hook_2_0_2.so",
-        "libbeatsaber-hook_2_0_3.so",
-        "libbs-utils.so",
-        "libcodegen_0_10_2.so",
-        "libcustom-types.so",
-        "libquestui.so"
-    ],
-    "fileCopies": [
-        {
-          "name": "container.pillows",
-          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/container.pillows"
-        },
-        {
-          "name": "Cubes.png",
-          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/images/Cubes.png"
-        },
-        {
-          "name": "BMBF.png",
-          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/images/BMBF.png"
-        },
-        {
-          "name": "BSMG.png",
-          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/images/BSMG.png"
-        },
-        {
-          "name": "simple.json",
-          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/simple.json"
-        },
-        {
-          "name": "default.json",
-          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/default.json"
-        },
-        {
-          "name": "linedup.json",
-          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/linedup.json"
-        },
-        {
-          "name": "loss.json",
-          "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/loss.json"
-        }
-    ]
+  "_QPVersion": "0.1.1",
+  "name": "Custom Pillows",
+  "id": "CustomPillows",
+  "author": "RedBrumbler",
+  "version": "1.0.3",
+  "packageId": "com.beatgames.beatsaber",
+  "packageVersion": "1.16.4",
+  "coverImage": "cover.png",
+  "description": "Custom Pillow mod for Quest\nOriginal by Toni Macaroni for PC",
+  "type": "Gameplay",
+  "dependencies": [],
+  "modFiles": [
+    "libcustompillows.so"
+  ],
+  "libraryFiles": [
+    "libbeatsaber-hook_2_2_5.so"
+  ],
+  "fileCopies": [
+    {
+      "name": "container.pillows",
+      "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/container.pillows"
+    },
+    {
+      "name": "Cubes.png",
+      "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/images/Cubes.png"
+    },
+    {
+      "name": "BMBF.png",
+      "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/images/BMBF.png"
+    },
+    {
+      "name": "BSMG.png",
+      "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/images/BSMG.png"
+    },
+    {
+      "name": "simple.json",
+      "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/simple.json"
+    },
+    {
+      "name": "default.json",
+      "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/default.json"
+    },
+    {
+      "name": "linedup.json",
+      "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/linedup.json"
+    },
+    {
+      "name": "loss.json",
+      "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/constellations/loss.json"
+    }
+  ]
 }
