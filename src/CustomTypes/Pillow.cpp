@@ -50,6 +50,7 @@ namespace MenuPillow
         if (!id) id = Shader::PropertyToID(mainTex);
         // set main tex
         Object::Destroy(mat->GetTexture(id));
+
         mat->SetTexture(mainTex, tex);
     }
 }
