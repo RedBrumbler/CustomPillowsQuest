@@ -150,27 +150,6 @@ jobs:
         files=( $pattern )
         echo ::set-output name=NAME::"${files[0]}"
     # Upload our release assets
-    - name: Upload Release Asset
-      id: upload_release_asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.get_upload_url.outputs.upload_url }}
-        asset_path: ./libs/arm64-v8a/${{ steps.libname.outputs.NAME }}
-        asset_name: ${{ steps.libname.outputs.NAME }}
-        asset_content_type: application/octet-stream
-
-    - name: Upload Debug Asset
-      id: upload_debug_asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.get_upload_url.outputs.upload_url }}
-        asset_path: ./obj/local/arm64-v8a/${{ steps.libname.outputs.NAME }}
-        asset_name: debug_${{ steps.libname.outputs.NAME }}
-        asset_content_type: application/octet-stream
 
     - name: Upload Qmod asset
       id: upload_qmod_asset
@@ -205,3 +184,9 @@ jobs:
         git push origin HEAD:version-${{ steps.get_tag_version.outputs.TAG }} --force
         git tag --force ${{ steps.get_tag_version.outputs.TAG }} ${{ steps.get_created_commit_id.outputs.ID }}
         git push --tags --force
+        
+#     - name: Merge this branch into whatever branch we were originally built off of.
+#       TODO
+        
+#    - name: QPM Publish
+#      run: ./QPM/QPM publish
