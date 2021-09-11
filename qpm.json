@@ -4,7 +4,7 @@
   "info": {
     "name": "BodyPillowQuest",
     "id": "BodyPillowQuest",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "url": null,
     "additionalData": {
       "overrideSoName": "libcustompillows.so"

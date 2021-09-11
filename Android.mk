@@ -66,7 +66,7 @@ LOCAL_SHARED_LIBRARIES += custom-types
 LOCAL_SHARED_LIBRARIES += questui
 LOCAL_SHARED_LIBRARIES += codegen
 LOCAL_LDLIBS += -llog -lz
-LOCAL_CFLAGS += -DID='"CustomPillows"' -DVERSION='"1.0.2"' -Wno-inaccessible-base -O2
+LOCAL_CFLAGS += -DID='"CustomPillows"' -DVERSION='"1.0.4"' -Wno-inaccessible-base -O2
 LOCAL_C_INCLUDES += ./include ./src ./extern/libil2cpp/il2cpp/libil2cpp ./extern ./extern/codegen/include ./shared
 LOCAL_CPP_FEATURES += rtti exceptions
 include $(BUILD_SHARED_LIBRARY)
