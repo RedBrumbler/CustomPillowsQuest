@@ -42,7 +42,7 @@ using namespace HMUI;
 
 DEFINE_TYPE(MenuPillow, ConfigViewController);
 
-static std::vector<Il2CppString*> constellationNames = {};
+static std::vector<std::string> constellationNames = {};
 
 
 
@@ -54,7 +54,7 @@ namespace MenuPillow
         {
             get_gameObject()->AddComponent<Touchable*>();
             VerticalLayoutGroup* layout = BeatSaberUI::CreateVerticalLayoutGroup(get_transform());
-            layout->get_gameObject()->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha(il2cpp_utils::createcsstr("round-rect-panel"), 0.5f);
+            layout->get_gameObject()->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha("round-rect-panel", 0.5f);
             layout->set_childForceExpandHeight(true);
             layout->set_childControlHeight(false);
             layout->set_childAlignment(UnityEngine::TextAnchor::MiddleCenter);
@@ -69,7 +69,7 @@ namespace MenuPillow
             for (auto con : *PillowManager::GetConstellations())
             {
                 // make strings of all the names
-                constellationNames.push_back(il2cpp_utils::createcsstr(con.get_name(), il2cpp_utils::StringType::Manual));
+                constellationNames.push_back(con.get_name());
                 // if it's the active one, set found to true
                 if (con.get_name().find(config.lastActiveConstellation) != std::string::npos) found = true;
                 
@@ -100,7 +100,7 @@ namespace MenuPillow
                     index %= (max + 1);
 
                     // which name to use
-                    Il2CppString* name = constellationNames[index];
+                    StringW name{constellationNames[index]};
                     
                     // set the text
                     constellationSwitcher->Text->SetText(name);
@@ -108,13 +108,10 @@ namespace MenuPillow
                     // set current val again
                     constellationSwitcher->CurrentValue = index;
 
-                    // get the std string of the constellation name
-                    std::string constellation = to_utf8(csstrtostr(name));
-                    
                     // get manager and set active
                     PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
                     if (!manager) return;
-                    manager->SetActiveConstellation(constellation);
+                    manager->SetActiveConstellation(constellationNames[index]);
                     SaveConfig();
                 });
 

@@ -15,7 +15,7 @@ DEFINE_TYPE(MenuPillow, Pillow);
 
 using namespace UnityEngine;
 
-static Il2CppString* mainTex = nullptr;
+static ConstString mainTex{"_mainTex"};
 extern Logger& getLogger();
 int id = 0;
 namespace MenuPillow
@@ -32,7 +32,6 @@ namespace MenuPillow
     {
         SkinnedMeshRenderer* renderer = GetComponent<SkinnedMeshRenderer*>();
         Material* mat = renderer->get_material();
-        if (!mainTex) mainTex = il2cpp_utils::createcsstr("_mainTex", il2cpp_utils::StringType::Manual);
         mat->SetTexture(mainTex, reinterpret_cast<Texture*>(texture));
     }
 
@@ -46,7 +45,6 @@ namespace MenuPillow
         // get renderer & mat
         SkinnedMeshRenderer* renderer = GetComponent<SkinnedMeshRenderer*>();
         Material* mat = renderer->get_material();
-        if (!mainTex) mainTex = il2cpp_utils::createcsstr("_mainTex", il2cpp_utils::StringType::Manual);
         if (!id) id = Shader::PropertyToID(mainTex);
         // set main tex
         Object::Destroy(mat->GetTexture(id));

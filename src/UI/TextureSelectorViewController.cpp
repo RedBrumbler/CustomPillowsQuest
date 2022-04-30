@@ -91,10 +91,7 @@ void AddImageToLayout(Transform* layout, std::string name)
 
 void AddToggleToLayout(Transform* layout, std::string name)
 {
-    Il2CppString* csName = il2cpp_utils::createcsstr(name, il2cpp_utils::StringType::Manual);
-    UnityEngine::UI::Toggle* toggle = BeatSaberUI::CreateToggle(layout, FileUtils::RemoveExtension(name), MenuPillow::TexturePool::GetIsActive(name), [csName](bool value){
-            if (!csName) return;
-            std::string name = to_utf8(csstrtostr(csName));
+    UnityEngine::UI::Toggle* toggle = BeatSaberUI::CreateToggle(layout, FileUtils::RemoveExtension(name), MenuPillow::TexturePool::GetIsActive(name), [name](bool value){
             // if the texture gets set to enabled, that means we need to add the tex to the list
             if (value) MenuPillow::TexturePool::AddTexture(name);
             // else remove it
@@ -125,7 +122,7 @@ void MenuPillow::TextureSelectorViewController::DidActivate(bool firstActivation
         
         // add some data to the struct that we use to get info into the coroutine
         TextureInfo* info = new TextureInfo(TexturePool::GetTextureVector(), container->get_transform());
-        StartCoroutine(reinterpret_cast<System::Collections::IEnumerator*>(custom_types::Helpers::CoroutineHelper::New(SetupSelectionsRoutine(info))));
+        StartCoroutine(custom_types::Helpers::CoroutineHelper::New(SetupSelectionsRoutine(info)));
     }
 }
 
@@ -137,7 +134,7 @@ custom_types::Helpers::Coroutine MenuPillow::TextureSelectorViewController::Setu
         info->layout = BeatSaberUI::CreateHorizontalLayoutGroup(info->container);
         info->layout->set_spacing(3.0f);
         info->layoutTransform = info->layout->get_transform();
-        info->layout->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha(il2cpp_utils::createcsstr("round-rect-panel"), 0.5f);
+        info->layout->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha("round-rect-panel", 0.5f);
         AddImageToLayout(info->layoutTransform, info->texVector[i]);
         AddToggleToLayout(info->layoutTransform, info->texVector[i]);
         co_yield nullptr;

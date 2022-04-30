@@ -7,7 +7,7 @@ struct PillowData;
 
 
 DECLARE_CLASS_CODEGEN(MenuPillow, Pile, UnityEngine::MonoBehaviour,
-    DECLARE_INSTANCE_METHOD(Array<Pillow*>*, GetPillows);
+    DECLARE_INSTANCE_METHOD(ArrayW<Pillow*>, GetPillows);
     DECLARE_INSTANCE_METHOD(void, Awake);
     DECLARE_INSTANCE_METHOD(void, Update);
     DECLARE_INSTANCE_METHOD(void, RandomizeTextures);

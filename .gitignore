@@ -9,5 +9,9 @@ libs/
 *.log
 *.backup
 *.psd
-
-UnityProject/
+extern.cmake
+qpm_defines.cmake
+mod.json
+build/
+*.bkp
+*.txt

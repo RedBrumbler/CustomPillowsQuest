@@ -2,24 +2,28 @@
     "configurations": [
       {
         "defines": [
-          "MOD_ID=\"MenuPillowQuest\"",
+          "MOD_ID=\"CustomPillows\"",
           "VERSION=\"0.1.0\"",
+          "USE_CODEGEN_FIELDS",
           "__GNUC__",
-          "__aarch64__",
-          "ID=\"MenuPillowQuest\""
+          "__aarch64__"
         ],
         "includePath": [
-          "${workspaceFolder}/**",
-          "d:/il2cpp/libil2cpp",
-          "d:/android-ndk-r21-windows-x86_64/android-ndk-r21/**",
+          "${workspaceFolder}/extern/includes/libil2cpp/il2cpp/libil2cpp",
+          "${workspaceFolder}/extern/includes/questui/shared/cppcodec",
+          "${workspaceFolder}/extern/includes/codegen/include",
+          "${workspaceFolder}/extern/includes/fmt/fmt/include",
+          "${workspaceFolder}/extern/includes",
+          "${workspaceFolder}/include",
           "${workspaceFolder}/shared",
-          "${workspaceFolder}/extern",
-          "${workspaceFolder}/extern/codegen/include/**"
+          "${workspaceFolder}",
+          "${default}"
         ],
         "name": "Quest",
         "cStandard": "c11",
         "cppStandard": "c++20",
-        "intelliSenseMode": "clang-x64"
+        "intelliSenseMode": "linux-clang-arm64",
+        "compileCommands": "${workspaceFolder}/build/compile_commands.json"
       }
     ],
     "version": 4

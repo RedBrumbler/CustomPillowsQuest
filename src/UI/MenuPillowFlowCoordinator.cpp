@@ -12,7 +12,7 @@ namespace MenuPillow
         if (firstActivation)
         {
             // set the title ofc
-            SetTitle(il2cpp_utils::createcsstr("Custom Pillows"), HMUI::ViewController::AnimationType::Out);
+            SetTitle("Custom Pillows", HMUI::ViewController::AnimationType::Out);
             showBackButton = true; // we wanna go back
 
             // make the config view controller

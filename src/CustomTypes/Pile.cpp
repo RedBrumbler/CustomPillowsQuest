@@ -12,20 +12,20 @@
 
 DEFINE_TYPE(MenuPillow, Pile);
 
-static Il2CppString* meshName = nullptr;
+static ConstString meshName{"mesh"};
 
 using namespace UnityEngine;
 
 struct PillowData {
     int count;
-    Array<MenuPillow::Pillow*>* pillows;
+    ArrayW<MenuPillow::Pillow*> pillows;
 
-    PillowData(int count, Array<MenuPillow::Pillow*>* pillows) : count(count), pillows(pillows) {};
+    PillowData(int count, ArrayW<MenuPillow::Pillow*> pillows) : count(count), pillows(pillows) {};
 };
 
 namespace MenuPillow
 {
-    Array<Pillow*>* Pile::GetPillows()
+    ArrayW<Pillow*> Pile::GetPillows()
     {
         return get_gameObject()->GetComponentsInChildren<Pillow*>(true);
     }
@@ -33,15 +33,12 @@ namespace MenuPillow
     void Pile::Awake()
     {
         childCount = get_transform()->get_childCount();
-        if (!meshName) meshName = il2cpp_utils::createcsstr("mesh", il2cpp_utils::StringType::Manual);
         get_transform()->set_localScale(UnityEngine::Vector3::get_one() * 0.4f);
-        StartCoroutine(reinterpret_cast<System::Collections::IEnumerator*>(custom_types::Helpers::CoroutineHelper::New(SetupPillowsRoutine())));
+        StartCoroutine(custom_types::Helpers::CoroutineHelper::New(SetupPillowsRoutine()));
     }
 
     custom_types::Helpers::Coroutine Pile::SetupPillowsRoutine()
     {
-        if (!meshName) meshName = il2cpp_utils::createcsstr("mesh", il2cpp_utils::StringType::Manual);
-
         int childCount = get_transform()->get_childCount();
         for (int i = 0; i < childCount; i++)
         {
@@ -65,9 +62,9 @@ namespace MenuPillow
 
     void Pile::RandomizeTextures()
     {
-        Array<Pillow*>* pillows = GetPillows();
+        ArrayW<Pillow*> pillows = GetPillows();
         PillowData* data = new PillowData(pillows->Length(), pillows);
-        StartCoroutine(reinterpret_cast<System::Collections::IEnumerator*>(custom_types::Helpers::CoroutineHelper::New(RandomizeRoutine(data))));
+        StartCoroutine(custom_types::Helpers::CoroutineHelper::New(RandomizeRoutine(data)));
     }
     
     custom_types::Helpers::Coroutine Pile::RandomizeRoutine(PillowData* data)

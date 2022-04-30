@@ -61,7 +61,7 @@ UnityEngine::Texture2D* FileUtils::FileToTexture(std::string filePath)
 {
     std::ifstream instream(filePath, std::ios::in | std::ios::binary);
     std::vector<uint8_t> data((std::istreambuf_iterator<char>(instream)), std::istreambuf_iterator<char>());
-    Array<uint8_t>* bytes = il2cpp_utils::vectorToArray(data);
+    ArrayW<uint8_t> bytes = il2cpp_utils::vectorToArray(data);
     UnityEngine::Texture2D* texture = UnityEngine::Texture2D::New_ctor(0, 0, UnityEngine::TextureFormat::RGBA32, false, false);
     UnityEngine::ImageConversion::LoadImage(texture, bytes, false);
     return texture;

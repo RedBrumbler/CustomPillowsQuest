@@ -96,7 +96,7 @@ MAKE_HOOK_MATCH(MainFlowCoordinator_DidActivate, &GlobalNamespace::MainFlowCoord
 
 extern "C" void setup(ModInfo info)
 {
-    info.id = ID;
+    info.id = MOD_ID;
     info.version = VERSION;
 
     modInfo = info;
@@ -132,7 +132,7 @@ extern "C" void load()
 
     logger.info("Registering Flow Coordinator...");
 
-    QuestUI::Register::RegisterModSettingsFlowCoordinator<MenuPillow::MenuPillowFlowCoordinator*>((ModInfo){"Custom Pillows", ID});
+    QuestUI::Register::RegisterModSettingsFlowCoordinator<MenuPillow::MenuPillowFlowCoordinator*>((ModInfo){"Custom Pillows", MOD_ID});
 
     logger.info("Registered Flow Coordinator!");
 }
@@ -140,8 +140,8 @@ extern "C" void load()
 bool getSceneName(UnityEngine::SceneManagement::Scene scene, std::string& output)
 {
     LoggerContextObject logger = getLogger().WithContext("scene name");
-    Il2CppString* csString = UnityEngine::SceneManagement::Scene::GetNameInternal(scene.m_Handle);
+    StringW csString = UnityEngine::SceneManagement::Scene::GetNameInternal(scene.m_Handle);
     RET_0_UNLESS(logger, csString);
-    output = to_utf8(csstrtostr(csString));
+    output = static_cast<std::string>(csString);
     return true; 
 }

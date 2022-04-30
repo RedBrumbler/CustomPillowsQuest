@@ -20,7 +20,7 @@ namespace MenuPillow
     {
         if (!manager)
         {
-            Array<PillowManager*>* managers = Resources::FindObjectsOfTypeAll<PillowManager*>();
+            ArrayW<PillowManager*> managers = Resources::FindObjectsOfTypeAll<PillowManager*>();
             manager = managers->values[0];
         }
         if (!manager) 
@@ -35,7 +35,7 @@ namespace MenuPillow
     {
         if (!manager)
         {
-            Array<PillowManager*>* managers = Resources::FindObjectsOfTypeAll<PillowManager*>();
+            ArrayW<PillowManager*> managers = Resources::FindObjectsOfTypeAll<PillowManager*>();
             manager = managers->values[0];
         }
         if (!manager) 
@@ -108,7 +108,7 @@ namespace MenuPillow
         }
 
         // remove all old piles
-        Array<Pile*>* piles = GetComponentsInChildren<Pile*>();
+        ArrayW<Pile*> piles = GetComponentsInChildren<Pile*>();
         if (piles)
         {
             for (int i = 0; i < piles->Length(); i++)
@@ -146,7 +146,7 @@ namespace MenuPillow
             return;
         }
 
-        Array<Pile*>* piles = manager->GetComponentsInChildren<Pile*>(true);
+        ArrayW<Pile*> piles = manager->GetComponentsInChildren<Pile*>(true);
 
         if (!piles) return;
         for (int i = 0; i < piles->Length(); i++)

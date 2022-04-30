@@ -2,10 +2,10 @@
   "sharedDir": "shared",
   "dependenciesDir": "extern",
   "info": {
-    "name": "BodyPillowQuest",
-    "id": "BodyPillowQuest",
+    "name": "Custom Pillows",
+    "id": "custom-pillows",
     "version": "1.0.3",
-    "url": null,
+    "url": "https://github.com/RedBrumbler/CustomPillowsQuest",
     "additionalData": {
       "overrideSoName": "libcustompillows.so"
     }
@@ -13,7 +13,7 @@
   "dependencies": [
     {
       "id": "beatsaber-hook",
-      "versionRange": "*",
+      "versionRange": "^3.8.1",
       "additionalData": {
         "extraFiles": [
           "src/inline-hook"
@@ -21,18 +21,34 @@
       }
     },
     {
-      "id": "questui",
-      "versionRange": "*",
-      "additionalData": {}
-    },
-    {
       "id": "codegen",
-      "versionRange": "*",
-      "additionalData": {}
+      "versionRange": "^0.22.0",
+      "additionalData": {
+        "includeQmod": false
+      }
     },
     {
       "id": "custom-types",
-      "versionRange": "*",
+      "versionRange": "^0.15.9",
+      "additionalData": {
+        "includeQmod": false
+      }
+    },
+    {
+      "id": "questui",
+      "versionRange": "^0.13.2",
+      "additionalData": {
+        "includeQmod": false
+      }
+    },
+    {
+      "id": "modloader",
+      "versionRange": "^1.2.3",
+      "additionalData": {}
+    },
+    {
+      "id": "libil2cpp",
+      "versionRange": "^0.2.3",
       "additionalData": {}
     }
   ],
