@@ -13,10 +13,6 @@
   "libraryFiles": [],
   "fileCopies": [
     {
-      "name": "container.pillows",
-      "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/container.pillows"
-    },
-    {
       "name": "Cubes.png",
       "destination": "/sdcard/ModData/com.beatgames.beatsaber/Mods/CustomPillows/images/Cubes.png"
     },
