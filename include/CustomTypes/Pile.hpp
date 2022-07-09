@@ -1,22 +1,19 @@
 #pragma once
+
 #include "custom-types/shared/macros.hpp"
-#include "custom-types/shared/coroutine.hpp"
+#include "UnityEngine/MonoBehaviour.hpp"
+
 #include "CustomTypes/Pillow.hpp"
+#include "CustomTypes/TexturePool.hpp"
 
-struct PillowData;
+DECLARE_CLASS_CODEGEN(CustomPillows, Pile, UnityEngine::MonoBehaviour,
+    DECLARE_INSTANCE_FIELD(TexturePool*, texturePool);
+    DECLARE_INSTANCE_FIELD(ArrayW<Pillow*>, pillows);
 
-
-DECLARE_CLASS_CODEGEN(MenuPillow, Pile, UnityEngine::MonoBehaviour,
-    DECLARE_INSTANCE_METHOD(ArrayW<Pillow*>, GetPillows);
     DECLARE_INSTANCE_METHOD(void, Awake);
-    DECLARE_INSTANCE_METHOD(void, Update);
-    DECLARE_INSTANCE_METHOD(void, RandomizeTextures);
+    DECLARE_INSTANCE_METHOD(void, Start);
+    DECLARE_INSTANCE_METHOD(void, Shuffle);
     
-    private:
-        int childCount = 0;
-        int childIndex = 0;
-        bool randomizeTextures = false;
     public:
-        custom_types::Helpers::Coroutine RandomizeRoutine(PillowData* data);
-        custom_types::Helpers::Coroutine SetupPillowsRoutine();
+        void Hide(bool doHide = true);
 )

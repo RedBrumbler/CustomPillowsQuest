@@ -1,132 +1,112 @@
 #include "UI/ConfigViewController.hpp"
 #include "config.hpp"
 
-extern config_t config;
-
 #include "UnityEngine/RectOffset.hpp"
-#include "UnityEngine/RectTransform.hpp"
-#include "UnityEngine/Vector2.hpp"
-#include "UnityEngine/Rect.hpp"
-#include "UnityEngine/SpriteMeshType.hpp"
-#include "UnityEngine/UI/Image.hpp"
-#include "UnityEngine/UI/Toggle.hpp"
-#include "UnityEngine/UI/Toggle_ToggleEvent.hpp"
-#include "UnityEngine/UI/LayoutElement.hpp"
-#include "UnityEngine/Events/UnityAction.hpp"
-#include "UnityEngine/Events/UnityAction_1.hpp"
-#include "HMUI/ScrollView.hpp"
-#include "HMUI/ModalView.hpp"
-#include "HMUI/Touchable.hpp"
-#include "HMUI/InputFieldView.hpp"
-#include "UnityEngine/Coroutine.hpp"
-#include "UnityEngine/WaitUntil.hpp"
-#include "System/Func_1.hpp"
 
 #include "questui/shared/BeatSaberUI.hpp"
-#include "questui/shared/CustomTypes/Data/CustomDataType.hpp"
-#include "questui/shared/CustomTypes/Components/ExternalComponents.hpp"
 #include "questui/shared/CustomTypes/Components/Backgroundable.hpp"
 
-#include <cstdlib>
-#include <vector>
-#include <string>
+#include "HMUI/Touchable.hpp"
 
-#include "TexturePool.hpp"
-#include "CustomTypes/PillowManager.hpp"
+DEFINE_TYPE(CustomPillows, ConfigViewController);
 
-using namespace QuestUI;
+#define SetPreferredSize(identifier, width, height)                                         \
+    auto layout##identifier = identifier->get_gameObject()->GetComponent<LayoutElement*>(); \
+    if (!layout##identifier)                                                                \
+        layout##identifier = identifier->get_gameObject()->AddComponent<LayoutElement*>();  \
+    layout##identifier->set_preferredWidth(width);                                          \
+    layout##identifier->set_preferredHeight(height);                                        \
+    auto fitter##identifier = identifier->GetComponent<ContentSizeFitter*>();               \
+    fitter##identifier->set_verticalFit(ContentSizeFitter::FitMode::PreferredSize);         \
+    fitter##identifier->set_horizontalFit(ContentSizeFitter::FitMode::PreferredSize)
+    
 using namespace UnityEngine;
 using namespace UnityEngine::UI;
-using namespace UnityEngine::Events;
 using namespace HMUI;
+using namespace QuestUI::BeatSaberUI;
 
-DEFINE_TYPE(MenuPillow, ConfigViewController);
+namespace CustomPillows {
+    void ConfigViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
+        if (firstActivation) {
+            pillowManager = PillowManager::get_instance();
 
-static std::vector<std::string> constellationNames = {};
-
-
-
-namespace MenuPillow
-{
-    void ConfigViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
-    {
-        if (firstActivation)
-        {
             get_gameObject()->AddComponent<Touchable*>();
-            VerticalLayoutGroup* layout = BeatSaberUI::CreateVerticalLayoutGroup(get_transform());
-            layout->get_gameObject()->GetComponent<Backgroundable*>()->ApplyBackgroundWithAlpha("round-rect-panel", 0.5f);
-            layout->set_childForceExpandHeight(true);
-            layout->set_childControlHeight(false);
-            layout->set_childAlignment(UnityEngine::TextAnchor::MiddleCenter);
-            layout->get_rectTransform()->set_sizeDelta(UnityEngine::Vector2(0.0f, -20.0f));
-            //layout->set_spacing(3.0f);
+            // TODO: make enabling work, and let people change the constellation, and add a shuffle button
 
-            // which is the active constellation?
-            int active = 0;
+            auto vertical = CreateVerticalLayoutGroup(get_transform());
+            vertical->set_padding(RectOffset::New_ctor(2, 2, 2, 2));
+            SetPreferredSize(vertical, 70.0f, 45.0f);
 
-            //wether the active constellation was found already
-            bool found = false;
-            for (auto con : *PillowManager::GetConstellations())
-            {
-                // make strings of all the names
-                constellationNames.push_back(con.get_name());
-                // if it's the active one, set found to true
-                if (con.get_name().find(config.lastActiveConstellation) != std::string::npos) found = true;
-                
-                // when the active one has not been found, increase the counter
-                if (!found) active++; 
+            auto bg = vertical->get_gameObject()->AddComponent<QuestUI::Backgroundable*>();
+            bg->ApplyBackgroundWithAlpha("round-rect-panel", 0.8f);
+
+            // toggle enabled
+            CreateToggle(vertical->get_transform(), "Enabled", config.enabled, std::bind(&ConfigViewController::OnEnabledToggled, this, std::placeholders::_1));
+            CreateToggle(vertical->get_transform(), "Keep in Level", config.keepInLevel, std::bind(&ConfigViewController::OnKeepInLevelToggled, this, std::placeholders::_1));
+            CreateToggle(vertical->get_transform(), "Keep in Multi", config.keepInMulti, std::bind(&ConfigViewController::OnKeepInMultiToggled, this, std::placeholders::_1));
+
+            // toggle leave in level?
+            // toggle leave in multi?
+
+            auto constellationNamesVector = pillowManager->get_constellationNames();
+            constellationNames = ArrayW<StringW>(static_cast<il2cpp_array_size_t>(constellationNamesVector.size()));
+            int index = 0, active = 0;
+
+            for (auto& constellationName : constellationNamesVector) {
+                constellationNames[index] = constellationName;
+                if (constellationName == config.lastActiveConstellation) {
+                    active = index;
+                }
+                index++;
             }
-            
-            if (!found) active = 0;
 
-            // should pillows show at all?
-            BeatSaberUI::CreateToggle(layout->get_transform(), "Pillows Enabled", config.enabled, [](bool value) {
-                    config.enabled = value;
-                    if (config.enabled) PillowManager::OnModEnable();
-                    else PillowManager::OnModDisable();
-                    SaveConfig();
-            });
+            // choose constellation
+            constellationChanger = CreateIncrementSetting(vertical->get_transform(), "Constellation", 0, 1.0f, active, std::bind(&ConfigViewController::OnConstellationChanged, this, std::placeholders::_1));
+            constellationChanger->Text->SetText(constellationNames[active]);
 
-            // switch between the constellations with a rollback
-            constellationSwitcher = BeatSaberUI::CreateIncrementSetting(layout->get_transform(), "Constellation", 0, 1.0f, active, [&](float value) {
-                    // get the current value into an int for indexing
-                    int index = (int)value;
-                    // max is the constellationNames.size - 1
-                    int max = constellationNames.size() - 1;
 
-                    // if under 0, loop back to the top
-                    if (index < 0) index = max;
-                    // if not under 0, mod so it keeps in bounds
-                    index %= (max + 1);
-
-                    // which name to use
-                    StringW name{constellationNames[index]};
-                    
-                    // set the text
-                    constellationSwitcher->Text->SetText(name);
-                    
-                    // set current val again
-                    constellationSwitcher->CurrentValue = index;
-
-                    // get manager and set active
-                    PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
-                    if (!manager) return;
-                    manager->SetActiveConstellation(constellationNames[index]);
-                    SaveConfig();
-                });
-
-            // set text initially
-            constellationSwitcher->Text->SetText(constellationNames[active]);
-            
-            // Shuffle button 
-            QuestUI::BeatSaberUI::CreateUIButton(layout->get_transform(), "Shuffle", []{
-                PillowManager::RandomizeTextures();
-            });
+            // shuffle images
+            CreateUIButton(vertical->get_transform(), "Shuffle", std::bind(&ConfigViewController::OnShuffle, this));
         }
     }
 
-    void ConfigViewController::DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
-    {
-
+    void ConfigViewController::OnShuffle() {
+        if (config.enabled && pillowManager)
+            pillowManager->Shuffle();
     }
+
+    void ConfigViewController::OnEnabledToggled(bool value) {
+        pillowManager->Hide(!value);
+
+        config.enabled = value;
+        SaveConfig();
+    }
+
+    void ConfigViewController::OnKeepInLevelToggled(bool value) {
+        config.keepInLevel = value;
+        SaveConfig();
+    }
+
+    void ConfigViewController::OnKeepInMultiToggled(bool value) {
+        config.keepInMulti = value;
+        SaveConfig();
+    }
+
+    void ConfigViewController::OnConstellationChanged(float value) {
+        int index = (int)value;
+        int max = constellationNames.size() - 1;
+        // loop back
+        if (index < 0) index = max;
+        index %= (max + 1);
+        StringW name = constellationNames[index];
+
+        constellationChanger->Text->SetText(name);
+        constellationChanger->CurrentValue = index;
+
+        pillowManager->SetConstellation(index);
+        
+        config.lastActiveConstellation = static_cast<std::string>(name);
+        SaveConfig();
+    }
+
 }
