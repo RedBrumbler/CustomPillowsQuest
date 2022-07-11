@@ -21,8 +21,10 @@ DECLARE_CLASS_CODEGEN(CustomPillows, PillowManager, UnityEngine::MonoBehaviour,
         void SetConstellation(int index);
         void SetConstellation(std::string_view name);
         void SetConstellation(const Constellation& constellation);
-        
+        /** @brief Hide all pillows dependent on parameter */
         void Hide(bool doHide = true);
+        /** @brief Show all pillows dependent on parameter */
+        void Show(bool doShow = true);
         void Shuffle();
 
         std::vector<std::string> get_constellationNames();

@@ -39,7 +39,7 @@ namespace CustomPillows {
         SetConstellation(config.lastActiveConstellation);
 
         // if not enabled, hide everything
-        Hide(!config.enabled);
+        Show(config.enabled);
     }
 
     void PillowManager::SetConstellation(int index) {
@@ -93,9 +93,14 @@ namespace CustomPillows {
     }
     
     void PillowManager::Hide(bool doHide) {
+        if (!currentPiles) return;
         for (auto pile : currentPiles) {
             pile->Hide(doHide);
         }
+    }
+
+    void PillowManager::Show(bool doShow) {
+        Hide(!doShow);
     }
 
     void PillowManager::Shuffle() {
