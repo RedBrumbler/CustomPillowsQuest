@@ -6,6 +6,7 @@
 #include "questui/shared/QuestUI.hpp"
 
 #include "UI/PillowSettingsFlowCoordinator.hpp"
+#include "UI/PillowSettingsGameplaySetupView.hpp"
 
 ModInfo modInfo {MOD_ID, VERSION};
 
@@ -27,6 +28,7 @@ extern "C" void load()
 
     srand(time(NULL));
 
+    QuestUI::Register::RegisterGameplaySetupMenu<CustomPillows::PillowSettingsGameplaySetupView*>(modInfo, "Custom Pillows");
     QuestUI::Register::RegisterAllModSettingsFlowCoordinator<CustomPillows::PillowSettingsFlowCoordinator*>(modInfo, "Custom Pillows");
     INFO("Load Complete");
 } 

@@ -27,8 +27,6 @@ using namespace QuestUI::BeatSaberUI;
 namespace CustomPillows {
     void TextureSelectionViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
         if (firstActivation) {
-            // TODO: make this work the same as on PC, so a left / right list with buttons to move items, left being inactive, right being active
-            // that's a horizontal with 3 verticals, where the first and last contain a header with list, and the middle one 2 buttons, left and right
             auto vertical = CreateVerticalLayoutGroup(get_transform());
             auto horizontal = CreateHorizontalLayoutGroup(vertical);
 
