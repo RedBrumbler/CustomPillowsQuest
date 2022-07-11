@@ -124,8 +124,8 @@ namespace CustomPillows {
             index++;
         }
             
-        StringW name = constellationNames[index];
+        StringW name = constellationNames[active];
         constellationChanger->Text->SetText(name);
-        constellationChanger->CurrentValue = index;
+        constellationChanger->CurrentValue = active;
     }
 }
