@@ -100,7 +100,10 @@ namespace CustomPillows {
         int count = 0;
         for (auto file : all) {
             // get the file ext
-            std::string_view ext = FileUtils::GetExtension(file);
+            std::string ext{FileUtils::GetExtension(file)};
+            // lowercase it
+            for (auto& c : ext) c = tolower(c);
+
             DEBUG("File {} with ext `{}`", file, ext);
 
             auto allowedItr = std::find(allowedExtensions.begin(), allowedExtensions.end(), ext);
