@@ -19,9 +19,12 @@ namespace CustomPillows {
             set_showBackButton(true);
             SetTitle("Custom Pillows", HMUI::ViewController::AnimationType::In);
         }
+        
+        configViewController->get_gameObject()->SetActive(true);
     }
     
     void PillowSettingsFlowCoordinator::BackButtonWasPressed(HMUI::ViewController* topViewController) {
+        configViewController->get_gameObject()->SetActive(false);
         parentFlowCoordinator->DismissFlowCoordinator(this, HMUI::ViewController::AnimationDirection::Horizontal, nullptr, false);
     }
 
