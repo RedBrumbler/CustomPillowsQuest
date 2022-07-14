@@ -48,10 +48,7 @@ namespace CustomPillows {
             using AssetBundle_LoadFromMemoryAsync = function_ptr_t<UnityEngine::AssetBundleCreateRequest*, ArrayW<uint8_t>, int>;
             static AssetBundle_LoadFromMemoryAsync assetBundle_LoadFromMemoryAsync = reinterpret_cast<AssetBundle_LoadFromMemoryAsync>(il2cpp_functions::resolve_icall("UnityEngine.AssetBundle::LoadFromMemoryAsync_Internal"));
             
-            ArrayW<uint8_t> bytes(static_cast<il2cpp_array_size_t>(container_pillows::getLength()));
-            memcpy(&bytes[0], container_pillows::getData(), container_pillows::getLength());
-
-            auto bundleReq = assetBundle_LoadFromMemoryAsync(bytes, 0);
+            auto bundleReq = assetBundle_LoadFromMemoryAsync(IncludedAssets::container_pillows, 0);
             bundleReq->set_allowSceneActivation(true);
 
             DEBUG("Loading bundle");

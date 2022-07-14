@@ -76,10 +76,7 @@ namespace CustomPillows {
             settingsVertical->get_rectTransform()->set_anchoredPosition({72.5f, 47.5f});
             SetPreferredSize(settingsVertical, 5.0f, 5.0f);
 
-            auto arr = ArrayW<uint8_t>(static_cast<il2cpp_array_size_t>(arrow_png::getLength()));
-            memcpy(&arr[0], arrow_png::getData(), arrow_png::getLength());
-            
-            auto sprite = ArrayToSprite(arr);
+            auto sprite = ArrayToSprite(IncludedAssets::arrow_png);
 
             CreateClickableImage(settingsVertical->get_transform(), sprite, std::bind(&PillowSettingsGameplaySetupView::OnOpenSettings, this));
         } else {
