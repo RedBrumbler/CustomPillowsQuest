@@ -1,11 +1,11 @@
 #include "config.hpp"
-#include "beatsaber-hook/shared/rapidjson/include/rapidjson/document.h"
-#include "modloader/shared/modloader.hpp"
+#include "logging.hpp"
+#include "beatsaber-hook/shared/config/config-utils.hpp"
 
-config_t config;
+#include "beatsaber-hook/shared/rapidjson/include/rapidjson/document.h"
 
 extern ModInfo modInfo;
-extern Logger& getLogger();
+Config config;
 
 Configuration& getConfig()
 {
@@ -17,7 +17,7 @@ Configuration& getConfig()
 rapidjson::Value GetTexturesArray(rapidjson::Document::AllocatorType& allocator)
 {
     rapidjson::Value array(rapidjson::kArrayType);
-    for (auto tex : config.lastActiveTextures)
+    for (auto& tex : config.lastActiveTextures)
     {
         rapidjson::Value texVal(tex.c_str(), tex.size(), allocator);
         array.PushBack(texVal, allocator);
@@ -28,11 +28,13 @@ rapidjson::Value GetTexturesArray(rapidjson::Document::AllocatorType& allocator)
 
 void SaveConfig()
 {
-    getLogger().WithContext("Save Config").info("Saving Configuration...");
+    INFO("Saving Configuration...");
     rapidjson::Document& doc = getConfig().config;
     doc.RemoveAllMembers();
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
     doc.AddMember("enabled", config.enabled, allocator);
+    doc.AddMember("keepInLevel", config.keepInLevel, allocator);
+    doc.AddMember("keepInMulti", config.keepInMulti, allocator);
     doc.AddMember("lastActiveConstellation", config.lastActiveConstellation, allocator);
 
     std::string texString = "lastActiveTextures";
@@ -40,9 +42,8 @@ void SaveConfig()
     doc.AddMember(texName, GetTexturesArray(allocator), allocator);
 
     getConfig().Write();
-    getLogger().WithContext("Save Config").info("Saved Configuration!");
+    INFO("Saved Configuration!");
 }
-
 
 std::vector<std::string> LoadActiveTextureNames(rapidjson::Value& texArray)
 {
@@ -56,28 +57,31 @@ std::vector<std::string> LoadActiveTextureNames(rapidjson::Value& texArray)
     return result;
 }
 
+#define GETBOOL(name)                               \
+    auto itr_##name = doc.FindMember(#name);        \
+    if (itr_##name != doc.MemberEnd())                \
+        config.name = itr_##name->value.GetBool();  \
+    else                                            \
+        foundEverything = false
+
+#define GETSTRING(name)                             \
+    auto itr_##name = doc.FindMember(#name);        \
+    if (itr_##name != doc.MemberEnd())              \
+        config.name = itr_##name->value.GetString();\
+    else                                            \
+        foundEverything = false
+
 bool LoadConfig()
 {
-    getLogger().WithContext("Load Config").info("Loading Configuration...");
+    INFO("Loading Configuration...");
     bool foundEverything = true;
     rapidjson::Document& doc = getConfig().config;
 
-    if (doc.HasMember("enabled") && doc["enabled"].IsBool())
-    {
-        config.enabled = doc["enabled"].GetBool();
-    }
-    else
-    {
-        foundEverything = false;
-    }
-    if (doc.HasMember("lastActiveConstellation") && doc["lastActiveConstellation"].IsString())
-    {
-        config.lastActiveConstellation = doc["lastActiveConstellation"].GetString();
-    }
-    else
-    {
-        foundEverything = false;
-    }
+    GETBOOL(enabled);
+    GETBOOL(keepInLevel);
+    GETBOOL(keepInMulti);
+    GETSTRING(lastActiveConstellation);
+
     if (doc.HasMember("lastActiveTextures") && doc["lastActiveTextures"].IsArray())
     {
         config.lastActiveTextures = LoadActiveTextureNames(doc["lastActiveTextures"]);
@@ -86,6 +90,6 @@ bool LoadConfig()
     {
         foundEverything = false;
     }
-    if (foundEverything) getLogger().WithContext("Load Config").info("Loaded Configuration!");
+    if (foundEverything) INFO("Loaded Configuration!");
     return foundEverything;
 }

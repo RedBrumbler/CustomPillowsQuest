@@ -1,201 +1,120 @@
-#include "config.hpp"
 #include "CustomTypes/PillowManager.hpp"
-#include "UnityEngine/Object.hpp"
-#include "UnityEngine/GameObject.hpp"
-#include "UnityEngine/Resources.hpp"
-#include "CustomTypes/PileProvider.hpp"
-#include "TexturePool.hpp"
 #include "static-defines.hpp"
+#include "config.hpp"
+#include "logging.hpp"
 
-DEFINE_TYPE(MenuPillow, PillowManager);
+#include "UnityEngine/Transform.hpp"
+#include <fmt/core.h>
+
+DEFINE_TYPE(CustomPillows, PillowManager);
 
 using namespace UnityEngine;
 
-extern config_t config;
-extern Logger& getLogger();
+namespace CustomPillows {
+    SafePtrUnity<PillowManager> PillowManager::instance;
 
-namespace MenuPillow
-{
-    void PillowManager::OnMenuSceneActivate()
-    {
-        if (!manager)
-        {
-            ArrayW<PillowManager*> managers = Resources::FindObjectsOfTypeAll<PillowManager*>();
-            manager = managers->values[0];
-        }
-        if (!manager) 
-        {
-            getLogger().error("Manager was nullptr");
-            return;
-        }
-        manager->get_gameObject()->SetActive(true);
+    void PillowManager::ctor() {
+        currentPiles = List<Pile*>::New_ctor();
+        currentConstellation = Constellation();
+        constellations = {};
     }
 
-    void PillowManager::OnMenuSceneDeActivate()
-    {
-        if (!manager)
-        {
-            ArrayW<PillowManager*> managers = Resources::FindObjectsOfTypeAll<PillowManager*>();
-            manager = managers->values[0];
-        }
-        if (!manager) 
-        {
-            getLogger().error("Manager was nullptr");
-            return;
-        }
-        manager->get_gameObject()->SetActive(false);
+    PillowManager* PillowManager::get_instance() {
+        if (instance) return instance.ptr();
+            static ConstString pillowModelManager{"PillowModelManager"};
+            auto go = GameObject::New_ctor(pillowModelManager);
+            Object::DontDestroyOnLoad(go);
+            instance = go->AddComponent<PillowManager*>();
+            return instance.ptr();
     }
 
-    void PillowManager::Awake()
-    {
-        TexturePool::LoadAllTextures();
-        //LoadConstellations();
-                
-        if (!(PileProvider::get_pilesize() > 0)) 
-        {
-            PileProvider::LoadBundle(true);
-            PileProvider::callback = [&]{ SetActiveConstellation(config.lastActiveConstellation); };
-        }
-        else SetActiveConstellation(config.lastActiveConstellation);
+    void PillowManager::OnGameRestart() {
+        instance = nullptr;
+        Object::DestroyImmediate(this->get_gameObject());
     }
 
-    void PillowManager::LoadConstellations()
-    {
+    void PillowManager::PostPillowLoad() {
+        // instantiate pillows n stuff
         constellations = Constellation::ConstellationsFromFolderPath(CONSTELLATIONPATH);
+        SetConstellation(config.lastActiveConstellation);
+
+        // if not enabled, hide everything
+        Show(config.enabled);
     }
 
-    Transform* PillowManager::SpawnPile(pillowparams param)
-    {
-        Pile* pile = PileProvider::GetPile(param.type);
-        if (!pile) return nullptr;
-        Transform* pileTransform = pile->get_transform();
-        pileTransform->set_localPosition(param.position);
-        pileTransform->set_localEulerAngles(param.rotation);
-        return pileTransform;
+    void PillowManager::SetConstellation(int index) {
+        SetConstellation(constellations[index % constellations.size()]);
     }
 
-    void PillowManager::RemoveLastPillow()
-    {
-        int childCount = get_transform()->get_childCount();
+    void PillowManager::SetConstellation(std::string_view name) {
+        auto itr = std::find_if(constellations.begin(), constellations.end(), [name](auto& x) -> bool {
+            return x.get_name() == name;
+        });
 
-        Object::Destroy(get_transform()->GetChild(childCount - 1));
+        if (itr != constellations.end()) {
+            DEBUG("Found Constellation!");
+            SetConstellation(*itr);
+        } else {
+            ERROR("Could not find the constellation named {}, not changing", name);
+        }
     }
+    
 
-    void PillowManager::SetActiveConstellation(std::string name)
-    {
-        // find the constellation with this name, and then make that the active one
-        Constellation* constellation = nullptr;
-        if (name == "") name = "simple"; 
+    void PillowManager::SetConstellation(const Constellation& constellation) {
+        DEBUG("Checking Equivalency between constellations");
+        if (currentConstellation.get_name() == constellation.get_name()) return;
+        
+        // remove old piles
+        DEBUG("Removing old piles");
+        for (auto pile : currentPiles) {
+            Object::DestroyImmediate(pile->get_gameObject());
+        }
+        currentPiles->Clear();
 
-        for (auto& it : constellations)
-        {
-            if (it.get_name() == name) 
-            {
-                SetActiveConstellation(it);
-                return;
-            } 
+        // save constellation
+        DEBUG("Saving constellation");
+        currentConstellation = constellation;
+        
+        // create new piles
+        DEBUG("Get parent transform");
+        auto parent = get_transform();
+
+        DEBUG("Creating new piles");
+        for (const auto& params : constellation.get_params()) {
+            auto pile = assetManager->GetPile(params.type);
+            auto transform = pile->get_transform();
+            transform->SetParent(parent, false);
+            transform->set_position(params.position);
+            transform->set_eulerAngles(params.rotation);
+            transform->set_localScale({0.4f, 0.4f, 0.4f});
+
+            currentPiles->Add(pile);
+        }
+    }
+    
+    void PillowManager::Hide(bool doHide) {
+        if (!currentPiles) return;
+        for (auto pile : currentPiles) {
+            pile->Hide(doHide);
         }
     }
 
-    void PillowManager::SetActiveConstellation(Constellation constellation)
-    {
-        config.lastActiveConstellation = constellation.get_name();
-        if (!config.enabled)
-        {
-            savedConstellation = constellation;
-            useSaved = true;
-            return;
-        }
+    void PillowManager::Show(bool doShow) {
+        Hide(!doShow);
+    }
 
-        // remove all old piles
-        ArrayW<Pile*> piles = GetComponentsInChildren<Pile*>();
-        if (piles)
-        {
-            for (int i = 0; i < piles->Length(); i++)
-            {
-                Pile* pile = piles->values[i];
-                if (!pile) continue;
-                Object::Destroy(pile->get_gameObject());
-            }
-        }
-
-        // spawn all new piles
-        const std::vector<pillowparams>& params = constellation.get_params();
-
-        for (auto param : params)
-        {
-            Transform* pile = SpawnPile(param);
-            if (pile) pile->SetParent(get_transform());
+    void PillowManager::Shuffle() {
+        for (auto pile : currentPiles) {
+            pile->Shuffle();
         }
     }
 
-    std::vector<MenuPillow::Constellation>* PillowManager::GetConstellations()
-    {
-        PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
-        if (manager) return &manager->constellations;
-        return nullptr;
-    }
-
-    void PillowManager::RandomizeTextures()
-    {
-        PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
-        if (!manager) return;
-        if (!config.enabled)
-        {
-            manager->shouldRandomizeOnReEnable = true;
-            return;
+    std::vector<std::string> PillowManager::get_constellationNames() {
+        std::vector<std::string> names;
+        names.reserve(constellations.size());
+        for (auto& constellation : constellations) {
+            names.emplace_back(constellation.get_name());
         }
-
-        ArrayW<Pile*> piles = manager->GetComponentsInChildren<Pile*>(true);
-
-        if (!piles) return;
-        for (int i = 0; i < piles->Length(); i++)
-        {
-            Pile* pile = piles->values[i];
-            if (!pile) continue;
-            pile->RandomizeTextures();
-        }
-    }
-
-    void PillowManager::OnModEnable()
-    {
-        PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
-        if (!manager) return;
-        if (manager->useSaved)
-        {
-            manager->useSaved = false;
-            manager->SetActiveConstellation(manager->savedConstellation);
-        }
-        else
-        {
-            int childCount = manager->get_transform()->get_childCount();
-            for (int i = 0; i < childCount; i++)
-            {
-                Transform* child = manager->get_transform()->GetChild(i);
-                child->get_gameObject()->SetActive(true);
-            }
-            if (manager->shouldRandomizeOnReEnable)
-            {
-                manager->shouldRandomizeOnReEnable = false;
-                manager->RandomizeTextures();
-            }
-        }
-    }
-
-    void PillowManager::OnModDisable()
-    {
-        PillowManager* manager = Object::FindObjectOfType<PillowManager*>();
-        if (!manager) return;
-        int childCount = manager->get_transform()->get_childCount();
-        for (int i = 0; i < childCount; i++)
-        {
-            Transform* child = manager->get_transform()->GetChild(i);
-            child->get_gameObject()->SetActive(false);
-        }
-    }
-
-    void PillowManager::OnDestroy()
-    {
-        getLogger().info("Pillow Manager destroyed!");
+        return names;
     }
 }

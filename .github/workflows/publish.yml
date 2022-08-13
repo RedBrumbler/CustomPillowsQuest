@@ -200,9 +200,3 @@ jobs:
         git push origin HEAD:version-${{ steps.get_tag_version.outputs.TAG }} --force
         git tag --force ${{ steps.get_tag_version.outputs.TAG }} ${{ steps.get_created_commit_id.outputs.ID }}
         git push --tags --force
-        
-#     - name: Merge this branch into whatever branch we were originally built off of.
-#       TODO
-#      Not a Package  
-#    - name: QPM Publish
-#      run: ./QPM/qpm-rust publish

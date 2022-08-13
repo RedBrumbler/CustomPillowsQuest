@@ -42,7 +42,7 @@ foreach ($lib in $modJson.libraryFiles)
     $filelist += $path
 }
 
-$ignoredFileSubStrings = @("ExtraPillows")
+$ignoredFileSubStrings = @("ExtraPillows", "template")
 if (Test-Path "./ExtraFiles")
 {
     $extraFiles = @()
@@ -81,6 +81,17 @@ if (Test-Path "./ExtraFiles")
         }
         else
         {
+            $found = $false
+            foreach ($ignore in $ignoredFileSubStrings) {
+                if ($entry.Name.Contains($ignore)) {
+                    $found = $true
+                    break
+                }
+            }
+
+            if ($found) {
+                continue
+            }
             $extraFiles += ,$entry.Name
         }
     }

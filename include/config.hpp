@@ -1,15 +1,16 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "beatsaber-hook/shared/config/config-utils.hpp"
 
-// deault to.. well... default
-struct config_t{
+struct Config {
     std::string lastActiveConstellation = "default";
     std::vector<std::string> lastActiveTextures = {"Cubes.png"};
     bool enabled = true;
+    bool keepInLevel = false;
+    bool keepInMulti = true;
 };
 
-Configuration& getConfig();
+extern Config config;
+
 void SaveConfig();
 bool LoadConfig();

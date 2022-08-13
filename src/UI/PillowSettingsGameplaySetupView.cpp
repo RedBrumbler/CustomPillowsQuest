@@ -1,14 +1,18 @@
-#include "UI/ConfigViewController.hpp"
+#include "UI/PillowSettingsGameplaySetupView.hpp"
 #include "config.hpp"
+#include "assets.hpp"
 
 #include "UnityEngine/RectOffset.hpp"
+#include "HMUI/ViewController_AnimationDirection.hpp"
 
 #include "questui/shared/BeatSaberUI.hpp"
 #include "questui/shared/CustomTypes/Components/Backgroundable.hpp"
 
 #include "HMUI/Touchable.hpp"
 
-DEFINE_TYPE(CustomPillows, ConfigViewController);
+#include "Questui_ModSettingsInfos.hpp"
+
+DEFINE_TYPE(CustomPillows, PillowSettingsGameplaySetupView);
 
 #define SetPreferredSize(identifier, width, height)                                         \
     auto layout##identifier = identifier->get_gameObject()->GetComponent<LayoutElement*>(); \
@@ -26,13 +30,14 @@ using namespace HMUI;
 using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
-    void ConfigViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
+    void PillowSettingsGameplaySetupView::DidActivate(bool firstActivation) {
         if (firstActivation) {
             pillowManager = PillowManager::get_instance();
 
             get_gameObject()->AddComponent<Touchable*>();
 
             auto vertical = CreateVerticalLayoutGroup(get_transform());
+            vertical->get_rectTransform()->set_anchoredPosition({35.0f, 22.5f});
             vertical->set_padding(RectOffset::New_ctor(2, 2, 2, 2));
             SetPreferredSize(vertical, 70.0f, 45.0f);
 
@@ -40,9 +45,9 @@ namespace CustomPillows {
             bg->ApplyBackgroundWithAlpha("round-rect-panel", 0.8f);
 
             // toggle enabled
-            enabledToggle = CreateToggle(vertical->get_transform(), "Enabled", config.enabled, std::bind(&ConfigViewController::OnEnabledToggled, this, std::placeholders::_1));
-            keepInLevelToggle = CreateToggle(vertical->get_transform(), "Keep in Level", config.keepInLevel, std::bind(&ConfigViewController::OnKeepInLevelToggled, this, std::placeholders::_1));
-            keepInMultiToggle = CreateToggle(vertical->get_transform(), "Keep in Multi", config.keepInMulti, std::bind(&ConfigViewController::OnKeepInMultiToggled, this, std::placeholders::_1));
+            enabledToggle = CreateToggle(vertical->get_transform(), "Enabled", config.enabled, std::bind(&PillowSettingsGameplaySetupView::OnEnabledToggled, this, std::placeholders::_1));
+            keepInLevelToggle = CreateToggle(vertical->get_transform(), "Keep in Level", config.keepInLevel, std::bind(&PillowSettingsGameplaySetupView::OnKeepInLevelToggled, this, std::placeholders::_1));
+            keepInMultiToggle = CreateToggle(vertical->get_transform(), "Keep in Multi", config.keepInMulti, std::bind(&PillowSettingsGameplaySetupView::OnKeepInMultiToggled, this, std::placeholders::_1));
 
             // toggle leave in level?
             // toggle leave in multi?
@@ -60,40 +65,63 @@ namespace CustomPillows {
             }
 
             // choose constellation
-            constellationChanger = CreateIncrementSetting(vertical->get_transform(), "Constellation", 0, 1.0f, active, std::bind(&ConfigViewController::OnConstellationChanged, this, std::placeholders::_1));
+            constellationChanger = CreateIncrementSetting(vertical->get_transform(), "Constellation", 0, 1.0f, active, std::bind(&PillowSettingsGameplaySetupView::OnConstellationChanged, this, std::placeholders::_1));
             constellationChanger->Text->SetText(constellationNames[active]);
 
 
             // shuffle images
-            CreateUIButton(vertical->get_transform(), "Shuffle", std::bind(&ConfigViewController::OnShuffle, this));
+            CreateUIButton(vertical->get_transform(), "Shuffle", std::bind(&PillowSettingsGameplaySetupView::OnShuffle, this));
+
+            auto settingsVertical = CreateVerticalLayoutGroup(get_transform());
+            settingsVertical->get_rectTransform()->set_anchoredPosition({72.5f, 47.5f});
+            SetPreferredSize(settingsVertical, 5.0f, 5.0f);
+
+            auto sprite = ArrayToSprite(IncludedAssets::arrow_png);
+
+            CreateClickableImage(settingsVertical->get_transform(), sprite, std::bind(&PillowSettingsGameplaySetupView::OnOpenSettings, this));
         } else {
             UpdateOptions();
         }
     }
 
-    void ConfigViewController::OnShuffle() {
+    void PillowSettingsGameplaySetupView::OnOpenSettings() {
+        auto fc = GetMainFlowCoordinator()->YoungestChildFlowCoordinatorOrSelf();
+
+        auto& modSettingsInfos = QuestUI::ModSettingsInfos::get();
+
+        for (auto& info : modSettingsInfos) {
+            if (info.modInfo.id == MOD_ID) {
+                if(!info.flowCoordinator)
+                    info.flowCoordinator = CreateFlowCoordinator(info.il2cpp_type);
+                fc->PresentFlowCoordinator(info.flowCoordinator, nullptr, ViewController::AnimationDirection::Horizontal, false, false);
+                break;
+            }
+        }
+    }
+
+    void PillowSettingsGameplaySetupView::OnShuffle() {
         if (config.enabled && pillowManager)
             pillowManager->Shuffle();
     }
 
-    void ConfigViewController::OnEnabledToggled(bool value) {
+    void PillowSettingsGameplaySetupView::OnEnabledToggled(bool value) {
         pillowManager->Hide(!value);
 
         config.enabled = value;
         SaveConfig();
     }
 
-    void ConfigViewController::OnKeepInLevelToggled(bool value) {
+    void PillowSettingsGameplaySetupView::OnKeepInLevelToggled(bool value) {
         config.keepInLevel = value;
         SaveConfig();
     }
 
-    void ConfigViewController::OnKeepInMultiToggled(bool value) {
+    void PillowSettingsGameplaySetupView::OnKeepInMultiToggled(bool value) {
         config.keepInMulti = value;
         SaveConfig();
     }
 
-    void ConfigViewController::OnConstellationChanged(float value) {
+    void PillowSettingsGameplaySetupView::OnConstellationChanged(float value) {
         int index = (int)value;
         int max = constellationNames.size() - 1;
         // loop back
@@ -110,7 +138,7 @@ namespace CustomPillows {
         SaveConfig();
     }
 
-    void ConfigViewController::UpdateOptions() {
+    void PillowSettingsGameplaySetupView::UpdateOptions() {
         enabledToggle->set_isOn(config.enabled);
         keepInLevelToggle->set_isOn(config.keepInLevel);
         keepInMultiToggle->set_isOn(config.keepInMulti);
