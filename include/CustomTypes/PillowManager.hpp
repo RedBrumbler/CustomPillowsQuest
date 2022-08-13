@@ -29,7 +29,7 @@ DECLARE_CLASS_CODEGEN(CustomPillows, PillowManager, UnityEngine::MonoBehaviour,
 
         std::vector<std::string> get_constellationNames();
     private:
-        static PillowManager* instance;
+        static SafePtrUnity<PillowManager> instance;
         std::vector<Constellation> constellations;
         Constellation currentConstellation;
 )

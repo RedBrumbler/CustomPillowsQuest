@@ -29,7 +29,7 @@ DECLARE_CLASS_CODEGEN(CustomPillows, AssetManager, UnityEngine::MonoBehaviour,
         Pile* GetPile(int index = -1);
         
     private:
-        static CustomPillows::AssetManager* instance;
+        static SafePtrUnity<CustomPillows::AssetManager> instance;
         bool loaded;
         bool loading;
 )

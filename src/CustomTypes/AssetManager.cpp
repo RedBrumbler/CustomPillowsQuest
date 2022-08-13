@@ -16,7 +16,7 @@ DEFINE_TYPE(CustomPillows, AssetManager);
 using namespace UnityEngine;
 
 namespace CustomPillows {
-        AssetManager* AssetManager::instance = nullptr;
+        SafePtrUnity<AssetManager> AssetManager::instance;
         
         void AssetManager::ctor() {
             loading = false;
@@ -26,12 +26,12 @@ namespace CustomPillows {
         }
 
         AssetManager* AssetManager::get_instance() {
-            if (instance) return instance;
+            if (instance) return instance.ptr();
             static ConstString assetManagerName{"AssetManager"};
             auto go = GameObject::New_ctor(assetManagerName);
             Object::DontDestroyOnLoad(go);
             instance = go->AddComponent<AssetManager*>();
-            return instance;
+            return instance.ptr();
         }
 
         void AssetManager::OnDestroy() {

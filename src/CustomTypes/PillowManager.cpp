@@ -11,7 +11,7 @@ DEFINE_TYPE(CustomPillows, PillowManager);
 using namespace UnityEngine;
 
 namespace CustomPillows {
-    PillowManager* PillowManager::instance = nullptr;
+    SafePtrUnity<PillowManager> PillowManager::instance;
 
     void PillowManager::ctor() {
         currentPiles = List<Pile*>::New_ctor();
@@ -20,12 +20,12 @@ namespace CustomPillows {
     }
 
     PillowManager* PillowManager::get_instance() {
-        if (instance) return instance;
+        if (instance) return instance.ptr();
             static ConstString pillowModelManager{"PillowModelManager"};
             auto go = GameObject::New_ctor(pillowModelManager);
             Object::DontDestroyOnLoad(go);
             instance = go->AddComponent<PillowManager*>();
-            return instance;
+            return instance.ptr();
     }
 
     void PillowManager::OnGameRestart() {
