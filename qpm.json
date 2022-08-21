@@ -24,21 +24,21 @@
       "id": "codegen",
       "versionRange": "^0.25.0",
       "additionalData": {
-        "includeQmod": false
+        "includeQmod": true
       }
     },
     {
       "id": "custom-types",
       "versionRange": "^0.15.18",
       "additionalData": {
-        "includeQmod": false
+        "includeQmod": true
       }
     },
     {
       "id": "questui",
       "versionRange": "^0.16.4",
       "additionalData": {
-        "includeQmod": false
+        "includeQmod": true
       }
     },
     {
