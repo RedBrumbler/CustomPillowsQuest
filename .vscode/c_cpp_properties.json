@@ -4,7 +4,6 @@
         "defines": [
           "MOD_ID=\"CustomPillows\"",
           "VERSION=\"0.1.0\"",
-          "USE_CODEGEN_FIELDS",
           "__GNUC__",
           "__aarch64__"
         ],

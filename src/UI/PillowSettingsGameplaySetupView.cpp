@@ -85,15 +85,12 @@ namespace CustomPillows {
     }
 
     void PillowSettingsGameplaySetupView::OnOpenSettings() {
-        auto fc = GetMainFlowCoordinator()->YoungestChildFlowCoordinatorOrSelf();
 
         auto& modSettingsInfos = QuestUI::ModSettingsInfos::get();
 
         for (auto& info : modSettingsInfos) {
             if (info.modInfo.id == MOD_ID) {
-                if(!info.flowCoordinator)
-                    info.flowCoordinator = CreateFlowCoordinator(info.il2cpp_type);
-                fc->PresentFlowCoordinator(info.flowCoordinator, nullptr, ViewController::AnimationDirection::Horizontal, false, false);
+                info.Present();
                 break;
             }
         }
