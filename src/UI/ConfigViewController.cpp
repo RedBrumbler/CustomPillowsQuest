@@ -26,10 +26,12 @@ using namespace HMUI;
 using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
+    void ConfigViewController::Inject(PillowManager* pillowManager) {
+        this->pillowManager = pillowManager;
+    }
+
     void ConfigViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
         if (firstActivation) {
-            pillowManager = PillowManager::get_instance();
-
             get_gameObject()->AddComponent<Touchable*>();
 
             auto vertical = CreateVerticalLayoutGroup(get_transform());

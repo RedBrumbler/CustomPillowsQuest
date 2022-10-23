@@ -8,6 +8,12 @@
 #include "UI/PillowSettingsFlowCoordinator.hpp"
 #include "UI/PillowSettingsGameplaySetupView.hpp"
 
+#include "Installers/AppInstaller.hpp"
+#include "Installers/GameInstaller.hpp"
+#include "Installers/MenuInstaller.hpp"
+
+#include "lapiz/shared/zenject/Zenjector.hpp"
+
 ModInfo modInfo {MOD_ID, VERSION};
 
 extern "C" void setup(ModInfo& info) 
@@ -28,7 +34,10 @@ extern "C" void load()
 
     srand(time(NULL));
 
-    QuestUI::Register::RegisterGameplaySetupMenu<CustomPillows::PillowSettingsGameplaySetupView*>(modInfo, "Custom Pillows");
-    QuestUI::Register::RegisterAllModSettingsFlowCoordinator<CustomPillows::PillowSettingsFlowCoordinator*>(modInfo, "Custom Pillows");
+    auto zenjector = Lapiz::Zenject::Zenjector::Get();
+
+    zenjector->Install<CustomPillows::AppInstaller*>(Lapiz::Zenject::Location::App);
+    zenjector->Install<CustomPillows::GameInstaller*>(Lapiz::Zenject::Location::Player);
+    zenjector->Install<CustomPillows::MenuInstaller*>(Lapiz::Zenject::Location::Menu);
     INFO("Load Complete");
 } 

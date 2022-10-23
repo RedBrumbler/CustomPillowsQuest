@@ -1,6 +1,7 @@
 #pragma once
 
 #include "custom-types/shared/macros.hpp"
+#include "lapiz/shared/macros.hpp"
 #include "UnityEngine/MonoBehaviour.hpp"
 #include "UnityEngine/UI/Toggle.hpp"
 
@@ -16,6 +17,7 @@ DECLARE_CLASS_CODEGEN(CustomPillows, PillowSettingsGameplaySetupView, UnityEngin
     DECLARE_INSTANCE_FIELD(UnityEngine::UI::Toggle*, keepInLevelToggle);
     DECLARE_INSTANCE_FIELD(QuestUI::IncrementSetting*, constellationChanger);
 
+    DECLARE_INJECT_METHOD(void, Inject, PillowManager* pillowManager);
     DECLARE_INSTANCE_METHOD(void, DidActivate, bool firstActivation);
 
     private:

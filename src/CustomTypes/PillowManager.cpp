@@ -11,7 +11,15 @@ DEFINE_TYPE(CustomPillows, PillowManager);
 using namespace UnityEngine;
 
 namespace CustomPillows {
-    SafePtrUnity<PillowManager> PillowManager::instance;
+
+    void PillowManager::Inject(AssetManager* assetManager) {
+        this->assetManager = assetManager;
+    }
+
+    void PillowManager::Initialize() {
+        DEBUG("Initialize");
+        assetManager->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(assetManager->LoadPillows(std::bind(&PillowManager::PostPillowLoad, this))));
+    }
 
     void PillowManager::ctor() {
         currentPiles = List<Pile*>::New_ctor();
@@ -19,18 +27,8 @@ namespace CustomPillows {
         constellations = {};
     }
 
-    PillowManager* PillowManager::get_instance() {
-        if (instance) return instance.ptr();
-            static ConstString pillowModelManager{"PillowModelManager"};
-            auto go = GameObject::New_ctor(pillowModelManager);
-            Object::DontDestroyOnLoad(go);
-            instance = go->AddComponent<PillowManager*>();
-            return instance.ptr();
-    }
-
     void PillowManager::OnGameRestart() {
-        instance = nullptr;
-        Object::DestroyImmediate(this->get_gameObject());
+        
     }
 
     void PillowManager::PostPillowLoad() {

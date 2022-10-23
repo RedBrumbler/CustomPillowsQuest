@@ -10,11 +10,13 @@ DEFINE_TYPE(CustomPillows, PillowSettingsFlowCoordinator);
 using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
+    void PillowSettingsFlowCoordinator::Inject(ConfigViewController* configViewController, TextureSelectionViewController* textureSelectionViewController) {
+        this->configViewController = configViewController;
+        this->textureSelectionViewController = textureSelectionViewController;
+    }
+
     void PillowSettingsFlowCoordinator::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
         if (firstActivation) {
-            textureSelectionViewController = CreateViewController<CustomPillows::TextureSelectionViewController*>();
-            configViewController = CreateViewController<CustomPillows::ConfigViewController*>();
-
             ProvideInitialViewControllers(textureSelectionViewController, nullptr, configViewController, nullptr, nullptr);
             set_showBackButton(true);
             SetTitle("Custom Pillows", HMUI::ViewController::AnimationType::In);
@@ -27,5 +29,4 @@ namespace CustomPillows {
         configViewController->get_gameObject()->SetActive(false);
         parentFlowCoordinator->DismissFlowCoordinator(this, HMUI::ViewController::AnimationDirection::Horizontal, nullptr, false);
     }
-
 }

@@ -16,28 +16,18 @@ DEFINE_TYPE(CustomPillows, AssetManager);
 using namespace UnityEngine;
 
 namespace CustomPillows {
-        SafePtrUnity<AssetManager> AssetManager::instance;
-        
+        void AssetManager::Inject(TexturePool* texturePool) {
+            this->texturePool = texturePool;
+        }
+
         void AssetManager::ctor() {
             loading = false;
             loaded = false;
-
-            texturePool = get_gameObject()->AddComponent<TexturePool*>();
-        }
-
-        AssetManager* AssetManager::get_instance() {
-            if (instance) return instance.ptr();
-            static ConstString assetManagerName{"AssetManager"};
-            auto go = GameObject::New_ctor(assetManagerName);
-            Object::DontDestroyOnLoad(go);
-            instance = go->AddComponent<AssetManager*>();
-            return instance.ptr();
         }
 
         void AssetManager::OnDestroy() {
-            instance = nullptr;
-            loading = false;
-            loaded = false;
+            //loading = false;
+            //loaded = false;
         }
 
         custom_types::Helpers::Coroutine AssetManager::LoadPillows(std::function<void(void)> onFinished) {
@@ -120,21 +110,20 @@ namespace CustomPillows {
             return clone;
         }
 
-
         void AssetManager::OnGameRestart() {
-            if (container)
-            {
-                Object::DestroyImmediate(container);
-                container = nullptr;
-            }
+        }
 
-            if (bundle)
-            {
+        void AssetManager::Dispose() {
+            if (container && container->m_CachedPtr.m_value) {
+                UnityEngine::Object::DestroyImmediate(container);
+            }
+            container = nullptr;
+
+            if (bundle && bundle->m_CachedPtr.m_value) {
                 bundle->Unload(true);
-                bundle = nullptr;
             }
-
-            instance = nullptr;
-            Object::DestroyImmediate(this->get_gameObject());
+            bundle = nullptr;
+            loading = false;
+            loaded = false;
         }
 }

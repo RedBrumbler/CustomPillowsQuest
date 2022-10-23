@@ -30,10 +30,12 @@ using namespace HMUI;
 using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
+    void PillowSettingsGameplaySetupView::Inject(PillowManager* pillowManager) {
+        this->pillowManager = pillowManager;
+    }
+
     void PillowSettingsGameplaySetupView::DidActivate(bool firstActivation) {
         if (firstActivation) {
-            pillowManager = PillowManager::get_instance();
-
             get_gameObject()->AddComponent<Touchable*>();
 
             auto vertical = CreateVerticalLayoutGroup(get_transform());

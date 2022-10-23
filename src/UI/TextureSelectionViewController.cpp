@@ -25,6 +25,11 @@ using namespace UnityEngine::UI;
 using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
+    void TextureSelectionViewController::Inject(TexturePool* texturePool, PillowManager* pillowManager) {
+        this->texturePool = texturePool;
+        this->pillowManager = pillowManager;
+    }
+
     void TextureSelectionViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
         if (firstActivation) {
             auto vertical = CreateVerticalLayoutGroup(get_transform());
@@ -35,10 +40,6 @@ namespace CustomPillows {
             auto swapButtonsVertical = CreateVerticalLayoutGroup(horizontal);
             auto rightListVertical = CreateVerticalLayoutGroup(horizontal);
             auto rightListTextVertical = CreateVerticalLayoutGroup(rightListVertical);
-
-            auto assetManager = AssetManager::get_instance();
-            texturePool = assetManager->texturePool;
-            pillowManager = PillowManager::get_instance();
 
             SetPreferredSize(vertical, 140.0f, 84.0f);
             SetPreferredSize(horizontal, 140.0f, 84.0f);

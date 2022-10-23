@@ -1,6 +1,7 @@
 #pragma once
 
 #include "custom-types/shared/macros.hpp"
+#include "lapiz/shared/macros.hpp"
 #include "HMUI/ViewController.hpp"
 
 #include "UI/PillowTextureTable/PillowTextureTableData.hpp"
@@ -18,6 +19,7 @@ DECLARE_CLASS_CODEGEN(CustomPillows, TextureSelectionViewController, HMUI::ViewC
     DECLARE_INSTANCE_FIELD(PillowTextureTableData*, inactiveList);
     DECLARE_INSTANCE_FIELD(PillowTextureTableData*, activeList);
     
+    DECLARE_INJECT_METHOD(void, Inject, TexturePool* texturePool, PillowManager* pillowManager);
     DECLARE_OVERRIDE_METHOD_MATCH(void, DidActivate, &HMUI::ViewController::DidActivate, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling);
 
     private:

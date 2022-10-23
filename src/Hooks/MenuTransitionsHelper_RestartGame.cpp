@@ -11,8 +11,8 @@ using namespace CustomPillows;
 
 MAKE_AUTO_HOOK_MATCH(MenuTransitionsHelper_RestartGame, &GlobalNamespace::MenuTransitionsHelper::RestartGame, void, GlobalNamespace::MenuTransitionsHelper* self, System::Action_1<Zenject::DiContainer*>* finishCallback)
 {
-    AssetManager::get_instance()->OnGameRestart();
-    PillowManager::get_instance()->OnGameRestart();
+    //AssetManager::get_instance()->OnGameRestart();
+    //PillowManager::get_instance()->OnGameRestart();
     
     MenuTransitionsHelper_RestartGame(self, finishCallback);
 }

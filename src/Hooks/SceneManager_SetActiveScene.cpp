@@ -10,11 +10,11 @@
 using namespace CustomPillows;
 
 void Show(bool doShow = true) {
-    PillowManager::get_instance()->Show(doShow);
+    //PillowManager::get_instance()->Show(doShow);
 }
 
 void Hide(bool doHide = true) {
-    PillowManager::get_instance()->Hide(doHide);
+    //PillowManager::get_instance()->Hide(doHide);
 }
 
 bool inMulti = false;

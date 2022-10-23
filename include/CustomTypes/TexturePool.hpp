@@ -10,7 +10,7 @@
 #include "System/Collections/Generic/KeyValuePair_2.hpp"
 
 
-DECLARE_CLASS_CODEGEN(CustomPillows, TexturePool, UnityEngine::MonoBehaviour,
+DECLARE_CLASS_CODEGEN(CustomPillows, TexturePool, Il2CppObject,
 
     public:
         template<typename T, typename U>

@@ -1,15 +1,19 @@
 #pragma once
 
 #include "custom-types/shared/macros.hpp"
+#include "lapiz/shared/macros.hpp"
 #include "UnityEngine/MonoBehaviour.hpp"
+#include "Zenject/IInitializable.hpp"
 
 #include "CustomTypes/AssetManager.hpp"
 #include "CustomTypes/Pile.hpp"
 #include "Constellation.hpp"
 
-DECLARE_CLASS_CODEGEN(CustomPillows, PillowManager, UnityEngine::MonoBehaviour,
+DECLARE_CLASS_CODEGEN_INTERFACES(CustomPillows, PillowManager, UnityEngine::MonoBehaviour, classof(::Zenject::IInitializable*),
+    DECLARE_INJECT_METHOD(void, Inject, AssetManager* assetManager);
     DECLARE_INSTANCE_METHOD(void, OnGameRestart);
     DECLARE_INSTANCE_METHOD(void, PostPillowLoad);
+    DECLARE_OVERRIDE_METHOD(void, Initialize, il2cpp_utils::il2cpp_type_check::MetadataGetter<&::Zenject::IInitializable::Initialize>::get());
     
     DECLARE_INSTANCE_FIELD(AssetManager*, assetManager);
     DECLARE_INSTANCE_FIELD(ListWrapper<Pile*>, currentPiles);
@@ -17,7 +21,6 @@ DECLARE_CLASS_CODEGEN(CustomPillows, PillowManager, UnityEngine::MonoBehaviour,
     DECLARE_CTOR(ctor);
 
     public:
-        static PillowManager* get_instance();
         void SetConstellation(int index);
         void SetConstellation(std::string_view name);
         void SetConstellation(const Constellation& constellation);
@@ -29,7 +32,6 @@ DECLARE_CLASS_CODEGEN(CustomPillows, PillowManager, UnityEngine::MonoBehaviour,
 
         std::vector<std::string> get_constellationNames();
     private:
-        static SafePtrUnity<PillowManager> instance;
         std::vector<Constellation> constellations;
         Constellation currentConstellation;
 )

@@ -145,7 +145,7 @@ namespace CustomPillows {
         auto enumerator = allTextures->GetEnumerator();
         while (enumerator.MoveNext()) {
             auto entry = enumerator.get_Current();
-            Object::DestroyImmediate(entry.value);
+            UnityEngine::Object::DestroyImmediate(entry.value);
             entry.value = nullptr;
         }
     }
