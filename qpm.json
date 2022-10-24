@@ -31,11 +31,6 @@
       "additionalData": {}
     },
     {
-      "id": "questui",
-      "versionRange": "^0.17.4",
-      "additionalData": {}
-    },
-    {
       "id": "modloader",
       "versionRange": "^1.2.3",
       "additionalData": {}
