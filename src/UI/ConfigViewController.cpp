@@ -26,8 +26,8 @@ using namespace HMUI;
 using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
-    void ConfigViewController::Inject(PillowManager* pillowManager) {
-        this->pillowManager = pillowManager;
+    void ConfigViewController::Inject(GlobalPillowManager* globalPillowManager) {
+        this->globalPillowManager = globalPillowManager;
     }
 
     void ConfigViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
@@ -49,7 +49,7 @@ namespace CustomPillows {
             // toggle leave in level?
             // toggle leave in multi?
 
-            auto constellationNamesVector = pillowManager->get_constellationNames();
+            auto constellationNamesVector = globalPillowManager->get_constellationNames();
             constellationNames = ArrayW<StringW>(static_cast<il2cpp_array_size_t>(constellationNamesVector.size()));
             int index = 0, active = 0;
 
@@ -74,12 +74,12 @@ namespace CustomPillows {
     }
 
     void ConfigViewController::OnShuffle() {
-        if (config.enabled && pillowManager)
-            pillowManager->Shuffle();
+        if (config.enabled && globalPillowManager)
+            globalPillowManager->Shuffle();
     }
 
     void ConfigViewController::OnEnabledToggled(bool value) {
-        pillowManager->Hide(!value);
+        globalPillowManager->Hide(!value);
 
         config.enabled = value;
         SaveConfig();
@@ -106,7 +106,7 @@ namespace CustomPillows {
         constellationChanger->Text->SetText(name);
         constellationChanger->CurrentValue = index;
 
-        pillowManager->SetConstellation(index);
+        globalPillowManager->SetConstellation(index);
         
         config.lastActiveConstellation = static_cast<std::string>(name);
         SaveConfig();

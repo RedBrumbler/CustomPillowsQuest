@@ -1,4 +1,4 @@
-#include "CustomTypes/PillowManager.hpp"
+#include "CustomTypes/PillowManagers/GlobalPillowManager.hpp"
 #include "static-defines.hpp"
 #include "config.hpp"
 #include "logging.hpp"
@@ -6,32 +6,32 @@
 #include "UnityEngine/Transform.hpp"
 #include <fmt/core.h>
 
-DEFINE_TYPE(CustomPillows, PillowManager);
+DEFINE_TYPE(CustomPillows, GlobalPillowManager);
 
 using namespace UnityEngine;
 
 namespace CustomPillows {
 
-    void PillowManager::Inject(AssetManager* assetManager) {
+    void GlobalPillowManager::Inject(AssetManager* assetManager) {
         this->assetManager = assetManager;
     }
 
-    void PillowManager::Initialize() {
+    void GlobalPillowManager::Initialize() {
         DEBUG("Initialize");
-        assetManager->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(assetManager->LoadPillows(std::bind(&PillowManager::PostPillowLoad, this))));
+        assetManager->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(assetManager->LoadPillows(std::bind(&GlobalPillowManager::PostPillowLoad, this))));
     }
 
-    void PillowManager::ctor() {
+    void GlobalPillowManager::ctor() {
         currentPiles = List<Pile*>::New_ctor();
         currentConstellation = Constellation();
         constellations = {};
     }
 
-    void PillowManager::OnGameRestart() {
+    void GlobalPillowManager::OnGameRestart() {
         
     }
 
-    void PillowManager::PostPillowLoad() {
+    void GlobalPillowManager::PostPillowLoad() {
         // instantiate pillows n stuff
         constellations = Constellation::ConstellationsFromFolderPath(CONSTELLATIONPATH);
         SetConstellation(config.lastActiveConstellation);
@@ -40,11 +40,11 @@ namespace CustomPillows {
         Show(config.enabled);
     }
 
-    void PillowManager::SetConstellation(int index) {
+    void GlobalPillowManager::SetConstellation(int index) {
         SetConstellation(constellations[index % constellations.size()]);
     }
 
-    void PillowManager::SetConstellation(std::string_view name) {
+    void GlobalPillowManager::SetConstellation(std::string_view name) {
         auto itr = std::find_if(constellations.begin(), constellations.end(), [name](auto& x) -> bool {
             return x.get_name() == name;
         });
@@ -58,7 +58,7 @@ namespace CustomPillows {
     }
     
 
-    void PillowManager::SetConstellation(const Constellation& constellation) {
+    void GlobalPillowManager::SetConstellation(const Constellation& constellation) {
         DEBUG("Checking Equivalency between constellations");
         if (currentConstellation.get_name() == constellation.get_name()) return;
         
@@ -90,24 +90,24 @@ namespace CustomPillows {
         }
     }
     
-    void PillowManager::Hide(bool doHide) {
+    void GlobalPillowManager::Hide(bool doHide) {
         if (!currentPiles) return;
         for (auto pile : currentPiles) {
             pile->Hide(doHide);
         }
     }
 
-    void PillowManager::Show(bool doShow) {
+    void GlobalPillowManager::Show(bool doShow) {
         Hide(!doShow);
     }
 
-    void PillowManager::Shuffle() {
+    void GlobalPillowManager::Shuffle() {
         for (auto pile : currentPiles) {
             pile->Shuffle();
         }
     }
 
-    std::vector<std::string> PillowManager::get_constellationNames() {
+    std::vector<std::string> GlobalPillowManager::get_constellationNames() {
         std::vector<std::string> names;
         names.reserve(constellations.size());
         for (auto& constellation : constellations) {

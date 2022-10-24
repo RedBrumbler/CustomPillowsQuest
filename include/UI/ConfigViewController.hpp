@@ -5,7 +5,7 @@
 #include "HMUI/ViewController.hpp"
 #include "UnityEngine/UI/Toggle.hpp"
 
-#include "CustomTypes/PillowManager.hpp"
+#include "CustomTypes/PillowManagers/GlobalPillowManager.hpp"
 #include "questui/shared/CustomTypes/Components/Settings/IncrementSetting.hpp"
 
 #ifndef DECLARE_OVERRIDE_METHOD_MATCH
@@ -14,7 +14,7 @@
 #endif
 
 DECLARE_CLASS_CODEGEN(CustomPillows, ConfigViewController, HMUI::ViewController,
-    DECLARE_INSTANCE_FIELD(PillowManager*, pillowManager);
+    DECLARE_INSTANCE_FIELD(GlobalPillowManager*, globalPillowManager);
     DECLARE_INSTANCE_FIELD(ArrayW<StringW>, constellationNames);
     
     DECLARE_INSTANCE_FIELD(UnityEngine::UI::Toggle*, enabledToggle);
@@ -22,7 +22,7 @@ DECLARE_CLASS_CODEGEN(CustomPillows, ConfigViewController, HMUI::ViewController,
     DECLARE_INSTANCE_FIELD(UnityEngine::UI::Toggle*, keepInLevelToggle);
     DECLARE_INSTANCE_FIELD(QuestUI::IncrementSetting*, constellationChanger);
 
-    DECLARE_INJECT_METHOD(void, Inject, PillowManager* pillowManager);
+    DECLARE_INJECT_METHOD(void, Inject, GlobalPillowManager* globalPillowManager);
     DECLARE_OVERRIDE_METHOD_MATCH(void, DidActivate, &HMUI::ViewController::DidActivate, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling);
 
     private:

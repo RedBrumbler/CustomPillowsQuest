@@ -25,9 +25,9 @@ using namespace UnityEngine::UI;
 using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
-    void TextureSelectionViewController::Inject(TexturePool* texturePool, PillowManager* pillowManager) {
+    void TextureSelectionViewController::Inject(TexturePool* texturePool, GlobalPillowManager* globalPillowManager) {
         this->texturePool = texturePool;
-        this->pillowManager = pillowManager;
+        this->globalPillowManager = globalPillowManager;
     }
 
     void TextureSelectionViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
@@ -93,7 +93,7 @@ namespace CustomPillows {
         SaveConfig();
 
         ReloadTextureLists();
-        pillowManager->Shuffle();
+        globalPillowManager->Shuffle();
     }
 
     void TextureSelectionViewController::DeActivateSelected() {
@@ -113,7 +113,7 @@ namespace CustomPillows {
         SaveConfig();
 
         ReloadTextureLists();
-        pillowManager->Shuffle();
+        globalPillowManager->Shuffle();
     }
 
     void TextureSelectionViewController::ReloadTextureLists() {

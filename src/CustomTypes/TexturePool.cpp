@@ -81,6 +81,7 @@ namespace CustomPillows {
         while (inActiveEnumerator.MoveNext()) inActivePairs.push_back(inActiveEnumerator.get_Current()); 
         inActiveTexturesArray = il2cpp_utils::vectorToArray(inActivePairs);
     }
+
     custom_types::Helpers::Coroutine TexturePool::LoadTextures(std::function<void(void)> onFinished) {
         if (loading || loaded) co_return;
         loading = true;
@@ -141,12 +142,15 @@ namespace CustomPillows {
         co_return;
     }
 
-    void TexturePool::OnDestroy() {
+    void TexturePool::Dispose() {
         auto enumerator = allTextures->GetEnumerator();
         while (enumerator.MoveNext()) {
             auto entry = enumerator.get_Current();
-            UnityEngine::Object::DestroyImmediate(entry.value);
+            if (entry.value && entry.value->m_CachedPtr.m_value) {
+                UnityEngine::Object::DestroyImmediate(entry.value);
+            }
             entry.value = nullptr;
         }
+        enumerator.Dispose();
     }
 }

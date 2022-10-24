@@ -9,7 +9,7 @@
 #include "CustomTypes/Pile.hpp"
 #include "Constellation.hpp"
 
-DECLARE_CLASS_CODEGEN_INTERFACES(CustomPillows, PillowManager, UnityEngine::MonoBehaviour, classof(::Zenject::IInitializable*),
+DECLARE_CLASS_CODEGEN_INTERFACES(CustomPillows, GlobalPillowManager, UnityEngine::MonoBehaviour, classof(::Zenject::IInitializable*),
     DECLARE_INJECT_METHOD(void, Inject, AssetManager* assetManager);
     DECLARE_INSTANCE_METHOD(void, OnGameRestart);
     DECLARE_INSTANCE_METHOD(void, PostPillowLoad);
