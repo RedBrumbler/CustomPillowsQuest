@@ -45,6 +45,7 @@ namespace IncludedAssets {
 
 	DECLARE_FILE(ConfigView_bsml)
 	DECLARE_FILE(GameplaySetupView_bsml)
+	DECLARE_FILE(TextureSelectView_bsml)
 	DECLARE_FILE(arrow_png)
 	DECLARE_FILE(container_pillows)
 

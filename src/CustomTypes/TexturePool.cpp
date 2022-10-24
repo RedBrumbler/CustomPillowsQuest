@@ -3,7 +3,6 @@
 #include "static-defines.hpp"
 #include "config.hpp"
 #include "logging.hpp"
-#include "questui/shared/BeatSaberUI.hpp"
 
 #include "UnityEngine/SpriteMeshType.hpp"
 #include "UnityEngine/Rect.hpp"
@@ -16,7 +15,6 @@
 DEFINE_TYPE(CustomPillows, TexturePool);
 
 using namespace UnityEngine;
-using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
     void TexturePool::ctor() {

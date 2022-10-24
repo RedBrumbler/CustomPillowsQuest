@@ -1,0 +1,33 @@
+<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/RedBrumbler/Quest-BSML-Docs/gh-pages/schema.xsd'>
+    <vertical>
+        <horizontal pref-width='160' horizontal-fit="PreferredSize" spacing="10">
+            <!--Inactive list-->
+            <vertical pref-width='50' horizontal-fit="PreferredSize">
+                <vertical background='round-rect-panel' child-align='MiddleCenter' pref-width='40' bg-alpha='0.8' pad='2'>
+                    <text text='Inactive' font-size='7' align="Center"/>
+                </vertical>
+                <page-button on-click='inactiveList#PageUp' direction="Up"/>
+                <vertical background='round-rect-panel' pad='2' pref-width='40' horizontal-fit="PreferredSize">
+                    <list id='inactiveList' data='inactiveTextures' pref-width='40' show-scrollbar='true' stick-scrolling='true' visible-cells="5"/>
+                </vertical>
+                <page-button on-click='inactiveList#PageDown' direction="Down"/>
+            </vertical>
+            <!--Center buttons-->
+            <vertical pref-width='10' horizontal-fit="PreferredSize">
+                <button text='->' on-click='ActivateSelected'/>
+                <button text='<-' on-click='DeActivateSelected'/>
+            </vertical>
+            <!--Active list-->
+            <vertical pref-width='50' horizontal-fit="PreferredSize">
+                <vertical background='round-rect-panel' child-align='MiddleCenter' pref-width='40' bg-alpha='0.8' pad='2'>
+                    <text text='Active' font-size='7' align="Center"/>
+                </vertical>
+                <page-button on-click='activeList#PageUp' direction="Up"/>
+                <vertical background='round-rect-panel' pad='2' pref-width='40' horizontal-fit="PreferredSize">
+                    <list id='activeList' data='activeTextures' pref-width='40' show-scrollbar='true' stick-scrolling='true' visible-cells="5"/>
+                </vertical>
+                <page-button on-click='activeList#PageDown' direction="Down"/>
+            </vertical>
+        </horizontal>
+    </vertical>
+</bg>

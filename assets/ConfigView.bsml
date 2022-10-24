@@ -1,5 +1,5 @@
 <bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://raw.githubusercontent.com/RedBrumbler/Quest-BSML-Docs/gh-pages/schema.xsd'>
-    <vertical pad='2' pref-height='45' pref-width='70' background='round-rect-panel' background-alpha='0.8' vertical-fit="PreferredSize" horizontal-fit="PreferredSize">
+    <vertical pad='2' pref-height='45' pref-width='70' background='round-rect-panel' bg-alpha='0.8' vertical-fit="PreferredSize" horizontal-fit="PreferredSize">
         <toggle-setting text='Enabled' value='Enabled' apply-on-change='true' hover-hint='Whether to show off your fabulous pillows!'/>
         <toggle-setting text='Keep in level' value='keepInLevel' apply-on-change='true' hover-hint='Toggle this on if you want to be able to see your pillows during gameplay'/>
         <toggle-setting text='Keep in multi' value='keepInMulti' apply-on-change='true' hover-hint='Toggle this on if you want to keep your pillows in the multiplayer lobby'/>
