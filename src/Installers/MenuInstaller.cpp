@@ -9,6 +9,7 @@
 #include "UI/TextureSelectionViewController.hpp"
 #include "UI/ConfigViewController.hpp"
 #include "UI/PillowUI.hpp"
+#include "UI/PillowSettingsGameplaySetupView.hpp"
 
 #include "lapiz/shared/utilities/ZenjectExtensions.hpp"
 DEFINE_TYPE(CustomPillows, MenuInstaller);
@@ -23,6 +24,7 @@ namespace CustomPillows {
         FromNewComponentOnNewGameObject(container->Bind<CustomPillows::PillowSettingsFlowCoordinator*>())->AsSingle();
         FromNewComponentAsViewController(container->BindInterfacesAndSelfTo<CustomPillows::TextureSelectionViewController*>())->AsSingle();
         FromNewComponentAsViewController(container->BindInterfacesAndSelfTo<CustomPillows::ConfigViewController*>())->AsSingle();
+        container->BindInterfacesAndSelfTo<PillowSettingsGameplaySetupView*>()->AsSingle();
         container->BindInterfacesAndSelfTo<PillowUI*>()->AsSingle();
     }
 }

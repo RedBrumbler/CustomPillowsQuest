@@ -3,11 +3,7 @@
 #include "HMUI/ViewController_AnimationDirection.hpp"
 #include "HMUI/ViewController_AnimationType.hpp"
 
-#include "questui/shared/BeatSaberUI.hpp"
-
 DEFINE_TYPE(CustomPillows, PillowSettingsFlowCoordinator);
-
-using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
     void PillowSettingsFlowCoordinator::Inject(ConfigViewController* configViewController, TextureSelectionViewController* textureSelectionViewController) {

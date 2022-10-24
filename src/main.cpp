@@ -1,9 +1,10 @@
 #include "hooking.hpp"
 #include "logging.hpp"
 #include "config.hpp"
+#include "assets.hpp"
 
 #include "custom-types/shared/register.hpp"
-#include "questui/shared/QuestUI.hpp"
+#include "bsml/shared/BSMLDataCache.hpp"
 
 #include "UI/PillowSettingsFlowCoordinator.hpp"
 #include "UI/PillowSettingsGameplaySetupView.hpp"
@@ -45,3 +46,12 @@ extern "C" void load()
     zenjector->Install<CustomPillows::MultiplayerMenuInstaller*, GlobalNamespace::MultiplayerMenuInstaller*>();
     INFO("Load Complete");
 } 
+
+BSML_DATACACHE(arrow) {
+    return IncludedAssets::arrow_png;
+}
+
+BSML_DATACACHE(gameplaySetupTab) {
+    return IncludedAssets::GameplaySetupView_bsml;
+}
+

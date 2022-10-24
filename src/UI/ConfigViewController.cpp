@@ -1,133 +1,83 @@
 #include "UI/ConfigViewController.hpp"
 #include "config.hpp"
+#include "logging.hpp"
+#include "assets.hpp"
 
-#include "UnityEngine/RectOffset.hpp"
-
-#include "questui/shared/BeatSaberUI.hpp"
-#include "questui/shared/CustomTypes/Components/Backgroundable.hpp"
-
-#include "HMUI/Touchable.hpp"
+#include "bsml/shared/BSML.hpp"
+#include "bsml/shared/BSML/Components/Settings/BaseSetting.hpp"
 
 DEFINE_TYPE(CustomPillows, ConfigViewController);
 
-#define SetPreferredSize(identifier, width, height)                                         \
-    auto layout##identifier = identifier->get_gameObject()->GetComponent<LayoutElement*>(); \
-    if (!layout##identifier)                                                                \
-        layout##identifier = identifier->get_gameObject()->AddComponent<LayoutElement*>();  \
-    layout##identifier->set_preferredWidth(width);                                          \
-    layout##identifier->set_preferredHeight(height);                                        \
-    auto fitter##identifier = identifier->GetComponent<ContentSizeFitter*>();               \
-    fitter##identifier->set_verticalFit(ContentSizeFitter::FitMode::PreferredSize);         \
-    fitter##identifier->set_horizontalFit(ContentSizeFitter::FitMode::PreferredSize)
-    
-using namespace UnityEngine;
-using namespace UnityEngine::UI;
-using namespace HMUI;
-using namespace QuestUI::BeatSaberUI;
-
 namespace CustomPillows {
+    void ConfigViewController::ctor() {
+        constellationNames = List<StringW>::New_ctor();
+    }
+
     void ConfigViewController::Inject(GlobalPillowManager* globalPillowManager) {
         this->globalPillowManager = globalPillowManager;
+        auto constellationNamesVector = globalPillowManager->get_constellationNames();
+        constellationNames->EnsureCapacity(constellationNamesVector.size());
+
+        for (auto& name : constellationNamesVector) {
+            constellationNames->Add(name);
+        }
     }
 
     void ConfigViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
         if (firstActivation) {
-            get_gameObject()->AddComponent<Touchable*>();
-
-            auto vertical = CreateVerticalLayoutGroup(get_transform());
-            vertical->set_padding(RectOffset::New_ctor(2, 2, 2, 2));
-            SetPreferredSize(vertical, 70.0f, 45.0f);
-
-            auto bg = vertical->get_gameObject()->AddComponent<QuestUI::Backgroundable*>();
-            bg->ApplyBackgroundWithAlpha("round-rect-panel", 0.8f);
-
-            // toggle enabled
-            enabledToggle = CreateToggle(vertical->get_transform(), "Enabled", config.enabled, std::bind(&ConfigViewController::OnEnabledToggled, this, std::placeholders::_1));
-            keepInLevelToggle = CreateToggle(vertical->get_transform(), "Keep in Level", config.keepInLevel, std::bind(&ConfigViewController::OnKeepInLevelToggled, this, std::placeholders::_1));
-            keepInMultiToggle = CreateToggle(vertical->get_transform(), "Keep in Multi", config.keepInMulti, std::bind(&ConfigViewController::OnKeepInMultiToggled, this, std::placeholders::_1));
-
-            // toggle leave in level?
-            // toggle leave in multi?
-
-            auto constellationNamesVector = globalPillowManager->get_constellationNames();
-            constellationNames = ArrayW<StringW>(static_cast<il2cpp_array_size_t>(constellationNamesVector.size()));
-            int index = 0, active = 0;
-
-            for (auto& constellationName : constellationNamesVector) {
-                constellationNames[index] = constellationName;
-                if (constellationName == config.lastActiveConstellation) {
-                    active = index;
-                }
-                index++;
-            }
-
-            // choose constellation
-            constellationChanger = CreateIncrementSetting(vertical->get_transform(), "Constellation", 0, 1.0f, active, std::bind(&ConfigViewController::OnConstellationChanged, this, std::placeholders::_1));
-            constellationChanger->Text->SetText(constellationNames[active]);
-
-
-            // shuffle images
-            CreateUIButton(vertical->get_transform(), "Shuffle", std::bind(&ConfigViewController::OnShuffle, this));
+            BSML::parse_and_construct(IncludedAssets::ConfigView_bsml, get_transform(), this);
         } else {
             UpdateOptions();
         }
     }
 
-    void ConfigViewController::OnShuffle() {
-        if (config.enabled && globalPillowManager)
-            globalPillowManager->Shuffle();
-    }
-
-    void ConfigViewController::OnEnabledToggled(bool value) {
+    bool ConfigViewController::get_Enabled() { return config.enabled; }
+    void ConfigViewController::set_Enabled(bool value) { 
         globalPillowManager->Hide(!value);
 
-        config.enabled = value;
+        config.enabled = value;        
         SaveConfig();
     }
 
-    void ConfigViewController::OnKeepInLevelToggled(bool value) {
+    bool ConfigViewController::get_keepInLevel() { return config.keepInLevel; }
+    void ConfigViewController::set_keepInLevel(bool value) { 
         config.keepInLevel = value;
         SaveConfig();
     }
 
-    void ConfigViewController::OnKeepInMultiToggled(bool value) {
+    bool ConfigViewController::get_keepInMulti() { return config.keepInMulti; }
+    void ConfigViewController::set_keepInMulti(bool value) { 
         config.keepInMulti = value;
         SaveConfig();
     }
 
-    void ConfigViewController::OnConstellationChanged(float value) {
-        int index = (int)value;
-        int max = constellationNames.size() - 1;
-        // loop back
-        if (index < 0) index = max;
-        index %= (max + 1);
-        StringW name = constellationNames[index];
+    ListWrapper<StringW> ConfigViewController::get_constellation_options() {
+        return constellationNames;
+    }
 
-        constellationChanger->Text->SetText(name);
-        constellationChanger->CurrentValue = index;
+    StringW ConfigViewController::get_constellation() {
+        auto value = globalPillowManager->get_currentConstellation().get_name();
+        return StringW(value);
+    }
 
-        globalPillowManager->SetConstellation(index);
+    void ConfigViewController::set_constellation(StringW value) {
+        config.lastActiveConstellation = static_cast<std::string>(value);
+        globalPillowManager->SetConstellation(config.lastActiveConstellation);
         
-        config.lastActiveConstellation = static_cast<std::string>(name);
         SaveConfig();
     }
 
+    void ConfigViewController::Shuffle() {
+        DEBUG("Shuffle");
+        if (config.enabled && globalPillowManager)
+            globalPillowManager->Shuffle();
+    }
+
     void ConfigViewController::UpdateOptions() {
-        enabledToggle->set_isOn(config.enabled);
-        keepInLevelToggle->set_isOn(config.keepInLevel);
-        keepInMultiToggle->set_isOn(config.keepInMulti);
+        auto settings = GetComponentsInChildren<BSML::BaseSetting*>(true);
 
-        int index = 0, active = 0;
-
-        for (auto& constellationName : constellationNames) {
-            if (constellationName == config.lastActiveConstellation) {
-                active = index;
-            }
-            index++;
+        for (auto setting : settings) {
+            il2cpp_utils::RunMethod(setting, "ReceiveValue");
         }
-            
-        StringW name = constellationNames[active];
-        constellationChanger->Text->SetText(name);
-        constellationChanger->CurrentValue = active;
     }
 }

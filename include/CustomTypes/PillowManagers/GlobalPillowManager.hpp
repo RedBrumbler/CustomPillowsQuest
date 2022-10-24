@@ -15,6 +15,7 @@ DECLARE_CLASS_CODEGEN_INTERFACES(CustomPillows, GlobalPillowManager, UnityEngine
     DECLARE_INSTANCE_METHOD(void, PostPillowLoad);
     DECLARE_OVERRIDE_METHOD(void, Initialize, il2cpp_utils::il2cpp_type_check::MetadataGetter<&::Zenject::IInitializable::Initialize>::get());
     
+    DECLARE_INSTANCE_FIELD(bool, isHidden);
     DECLARE_INSTANCE_FIELD(AssetManager*, assetManager);
     DECLARE_INSTANCE_FIELD(ListWrapper<Pile*>, currentPiles);
 
@@ -30,6 +31,7 @@ DECLARE_CLASS_CODEGEN_INTERFACES(CustomPillows, GlobalPillowManager, UnityEngine
         void Show(bool doShow = true);
         void Shuffle();
 
+        const Constellation& get_currentConstellation();
         std::vector<std::string> get_constellationNames();
     private:
         std::vector<Constellation> constellations;

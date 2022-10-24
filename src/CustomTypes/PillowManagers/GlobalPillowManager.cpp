@@ -87,13 +87,15 @@ namespace CustomPillows {
             transform->set_localScale({0.4f, 0.4f, 0.4f});
 
             currentPiles->Add(pile);
+            pile->Hide(isHidden);
         }
     }
     
     void GlobalPillowManager::Hide(bool doHide) {
         if (!currentPiles) return;
+        isHidden = doHide;
         for (auto pile : currentPiles) {
-            pile->Hide(doHide);
+            pile->Hide(isHidden);
         }
     }
 
@@ -105,6 +107,10 @@ namespace CustomPillows {
         for (auto pile : currentPiles) {
             pile->Shuffle();
         }
+    }
+
+    const Constellation& GlobalPillowManager::get_currentConstellation() {
+        return currentConstellation;
     }
 
     std::vector<std::string> GlobalPillowManager::get_constellationNames() {
