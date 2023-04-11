@@ -12,18 +12,16 @@ using namespace UnityEngine;
 
 namespace CustomPillows {
     void Pillow::Awake() {
-        static ConstString meshName{"mesh"};
-        auto meshRenderer = get_transform()->Find(meshName)->get_gameObject()->GetComponent<SkinnedMeshRenderer*>();
-        if (meshRenderer) material = meshRenderer->get_material();
+        if (pillowRenderer) material = pillowRenderer->get_material();
     }
 
     void Pillow::SetTexture(Texture2D* texture) {
-        if (!material) {
+        if (!material || !material->m_CachedPtr.m_value) {
             DEBUG("There is no material, not changing the texture");
             return;
         }
         INFO("Setting texture");
-        
+
         static int mainTexId = Shader::PropertyToID("_mainTex");
         material->SetTexture(mainTexId, texture);
     }

@@ -18,19 +18,24 @@
 
 #include "lapiz/shared/zenject/Zenjector.hpp"
 
+#include "static-defines.hpp"
+
 ModInfo modInfo {MOD_ID, VERSION};
 
-extern "C" void setup(ModInfo& info) 
+extern "C" void setup(ModInfo& info)
 {
     info = modInfo;
     INFO("Setup complete");
 }
 
-extern "C" void load() 
+extern "C" void load()
 {
+    mkpath(IMAGEPATH);
+    mkpath(CONSTELLATIONPATH);
+
     if (!LoadConfig())
         SaveConfig();
-    
+
     custom_types::Register::AutoRegister();
 
     auto& logger = CustomPillows::Logging::getLogger();
@@ -45,7 +50,7 @@ extern "C" void load()
     zenjector->Install<CustomPillows::MenuInstaller*>(Lapiz::Zenject::Location::Menu);
     zenjector->Install<CustomPillows::MultiplayerMenuInstaller*, GlobalNamespace::MultiplayerMenuInstaller*>();
     INFO("Load Complete");
-} 
+}
 
 BSML_DATACACHE(arrow) {
     return IncludedAssets::arrow_png;

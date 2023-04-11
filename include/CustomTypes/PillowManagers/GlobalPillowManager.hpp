@@ -11,10 +11,9 @@
 
 DECLARE_CLASS_CODEGEN_INTERFACES(CustomPillows, GlobalPillowManager, UnityEngine::MonoBehaviour, classof(::Zenject::IInitializable*),
     DECLARE_INJECT_METHOD(void, Inject, AssetManager* assetManager);
-    DECLARE_INSTANCE_METHOD(void, OnGameRestart);
     DECLARE_INSTANCE_METHOD(void, PostPillowLoad);
     DECLARE_OVERRIDE_METHOD(void, Initialize, il2cpp_utils::il2cpp_type_check::MetadataGetter<&::Zenject::IInitializable::Initialize>::get());
-    
+
     DECLARE_INSTANCE_FIELD(bool, isHidden);
     DECLARE_INSTANCE_FIELD(AssetManager*, assetManager);
     DECLARE_INSTANCE_FIELD(ListWrapper<Pile*>, currentPiles);

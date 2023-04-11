@@ -27,10 +27,6 @@ namespace CustomPillows {
         constellations = {};
     }
 
-    void GlobalPillowManager::OnGameRestart() {
-        
-    }
-
     void GlobalPillowManager::PostPillowLoad() {
         // instantiate pillows n stuff
         constellations = Constellation::ConstellationsFromFolderPath(CONSTELLATIONPATH);
@@ -56,41 +52,42 @@ namespace CustomPillows {
             ERROR("Could not find the constellation named {}, not changing", name);
         }
     }
-    
+
 
     void GlobalPillowManager::SetConstellation(const Constellation& constellation) {
-        DEBUG("Checking Equivalency between constellations");
         if (currentConstellation.get_name() == constellation.get_name()) return;
-        
+
         // remove old piles
-        DEBUG("Removing old piles");
         for (auto pile : currentPiles) {
             Object::DestroyImmediate(pile->get_gameObject());
         }
         currentPiles->Clear();
 
         // save constellation
-        DEBUG("Saving constellation");
         currentConstellation = constellation;
-        
+
         // create new piles
-        DEBUG("Get parent transform");
         auto parent = get_transform();
 
         DEBUG("Creating new piles");
-        for (const auto& params : constellation.get_params()) {
-            auto pile = assetManager->GetPile(params.type);
+        for (const auto& [type, position, rotation] : constellation.get_params()) {
+            auto pile = assetManager->GetPile(type);
+            if (!pile) {
+                ERROR("Was not able to get a proper pile from the asset manager");
+                continue;
+            }
+
             auto transform = pile->get_transform();
             transform->SetParent(parent, false);
-            transform->set_position(params.position);
-            transform->set_eulerAngles(params.rotation);
+            transform->set_position(position);
+            transform->set_eulerAngles(rotation);
             transform->set_localScale({0.4f, 0.4f, 0.4f});
 
             currentPiles->Add(pile);
             pile->Hide(isHidden);
         }
     }
-    
+
     void GlobalPillowManager::Hide(bool doHide) {
         if (!currentPiles) return;
         isHidden = doHide;
