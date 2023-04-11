@@ -63,7 +63,7 @@ namespace FileUtils {
         std::ifstream instream(path, std::ios::in | std::ios::binary | std::ios::ate);
         unsigned long size = instream.tellg();
         instream.seekg(0, instream.beg);
-        
+
         // this way we skip the copy step from vector to array, and just read directly into the array, making it quicker
         ArrayW<uint8_t> bytes = ArrayW<uint8_t>(static_cast<il2cpp_array_size_t>(size));
         instream.read(reinterpret_cast<char*>(&bytes[0]), size);

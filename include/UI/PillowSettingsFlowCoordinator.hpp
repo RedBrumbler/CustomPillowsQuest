@@ -1,6 +1,7 @@
 #pragma once
 
 #include "custom-types/shared/macros.hpp"
+#include "lapiz/shared/macros.hpp"
 #include "HMUI/FlowCoordinator.hpp"
 #include "HMUI/ViewController.hpp"
 
@@ -13,9 +14,11 @@
 #endif
 
 DECLARE_CLASS_CODEGEN(CustomPillows, PillowSettingsFlowCoordinator, HMUI::FlowCoordinator,
+    
     DECLARE_INSTANCE_FIELD(ConfigViewController*, configViewController);
     DECLARE_INSTANCE_FIELD(TextureSelectionViewController*, textureSelectionViewController);
 
+    DECLARE_INJECT_METHOD(void, Inject, ConfigViewController* configViewController, TextureSelectionViewController* textureSelectionViewController);
     DECLARE_OVERRIDE_METHOD_MATCH(void, DidActivate, &HMUI::FlowCoordinator::DidActivate, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling);
     DECLARE_OVERRIDE_METHOD_MATCH(void, BackButtonWasPressed, &HMUI::FlowCoordinator::BackButtonWasPressed, HMUI::ViewController* topViewController);
 )

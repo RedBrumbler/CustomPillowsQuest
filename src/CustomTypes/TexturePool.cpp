@@ -3,7 +3,6 @@
 #include "static-defines.hpp"
 #include "config.hpp"
 #include "logging.hpp"
-#include "questui/shared/BeatSaberUI.hpp"
 
 #include "UnityEngine/SpriteMeshType.hpp"
 #include "UnityEngine/Rect.hpp"
@@ -16,7 +15,6 @@
 DEFINE_TYPE(CustomPillows, TexturePool);
 
 using namespace UnityEngine;
-using namespace QuestUI::BeatSaberUI;
 
 namespace CustomPillows {
     void TexturePool::ctor() {
@@ -81,6 +79,7 @@ namespace CustomPillows {
         while (inActiveEnumerator.MoveNext()) inActivePairs.push_back(inActiveEnumerator.get_Current()); 
         inActiveTexturesArray = il2cpp_utils::vectorToArray(inActivePairs);
     }
+
     custom_types::Helpers::Coroutine TexturePool::LoadTextures(std::function<void(void)> onFinished) {
         if (loading || loaded) co_return;
         loading = true;
@@ -141,12 +140,15 @@ namespace CustomPillows {
         co_return;
     }
 
-    void TexturePool::OnDestroy() {
+    void TexturePool::Dispose() {
         auto enumerator = allTextures->GetEnumerator();
         while (enumerator.MoveNext()) {
             auto entry = enumerator.get_Current();
-            Object::DestroyImmediate(entry.value);
+            if (entry.value && entry.value->m_CachedPtr.m_value) {
+                UnityEngine::Object::DestroyImmediate(entry.value);
+            }
             entry.value = nullptr;
         }
+        enumerator.Dispose();
     }
 }

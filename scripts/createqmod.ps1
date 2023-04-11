@@ -42,7 +42,7 @@ foreach ($lib in $modJson.libraryFiles)
     $filelist += $path
 }
 
-$ignoredFileSubStrings = @("ExtraPillows", "template")
+$ignoredFileSubStrings = @("ExtraPillows", "template", "Piles.png")
 if (Test-Path "./ExtraFiles")
 {
     $extraFiles = @()
@@ -100,7 +100,7 @@ if (Test-Path "./ExtraFiles")
     {
         $path = "./ExtraFiles/" + $file
         $filelist += ,$path
-    } 
+    }
 }
 else
 {

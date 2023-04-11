@@ -16,26 +16,12 @@ DEFINE_TYPE(CustomPillows, AssetManager);
 using namespace UnityEngine;
 
 namespace CustomPillows {
-        SafePtrUnity<AssetManager> AssetManager::instance;
-        
+        void AssetManager::Inject(Zenject::DiContainer* container, TexturePool* texturePool) {
+            _container = container;
+            _texturePool = texturePool;
+        }
+
         void AssetManager::ctor() {
-            loading = false;
-            loaded = false;
-
-            texturePool = get_gameObject()->AddComponent<TexturePool*>();
-        }
-
-        AssetManager* AssetManager::get_instance() {
-            if (instance) return instance.ptr();
-            static ConstString assetManagerName{"AssetManager"};
-            auto go = GameObject::New_ctor(assetManagerName);
-            Object::DontDestroyOnLoad(go);
-            instance = go->AddComponent<AssetManager*>();
-            return instance.ptr();
-        }
-
-        void AssetManager::OnDestroy() {
-            instance = nullptr;
             loading = false;
             loaded = false;
         }
@@ -47,7 +33,7 @@ namespace CustomPillows {
             // resolve load bundle from memory
             using AssetBundle_LoadFromMemoryAsync = function_ptr_t<UnityEngine::AssetBundleCreateRequest*, ArrayW<uint8_t>, int>;
             static AssetBundle_LoadFromMemoryAsync assetBundle_LoadFromMemoryAsync = reinterpret_cast<AssetBundle_LoadFromMemoryAsync>(il2cpp_functions::resolve_icall("UnityEngine.AssetBundle::LoadFromMemoryAsync_Internal"));
-            
+
             auto bundleReq = assetBundle_LoadFromMemoryAsync(IncludedAssets::container_pillows, 0);
             bundleReq->set_allowSceneActivation(true);
 
@@ -55,46 +41,27 @@ namespace CustomPillows {
             // yield loading of bundle
             co_yield reinterpret_cast<System::Collections::IEnumerator*>(bundleReq);
 
-            bundle = bundleReq->get_assetBundle();
-            Object::DontDestroyOnLoad(bundle);
+            _bundle = bundleReq->get_assetBundle();
+            Object::DontDestroyOnLoad(_bundle);
 
-            auto assetReq = bundle->LoadAssetAsync("_Pillows", reinterpret_cast<System::Type*>(csTypeOf(GameObject*)));
+            auto assetReq = _bundle->LoadAssetAsync("_Pillows", reinterpret_cast<System::Type*>(csTypeOf(GameObject*)));
             assetReq->set_allowSceneActivation(true);
             DEBUG("Loading assets");
             // yield loading of asset
             co_yield reinterpret_cast<System::Collections::IEnumerator*>(assetReq);
 
             auto asset = reinterpret_cast<GameObject*>(assetReq->get_asset());
-            container = Object::Instantiate(asset);
-            Object::DontDestroyOnLoad(container);
-            container->SetActive(false);
-
-            // parse loaded assets into array
-            auto transform = container->get_transform();
-            int childCount = transform->get_childCount();
-
-            piles = ArrayW<Pile*>(static_cast<il2cpp_array_size_t>(childCount));
-
-            DEBUG("Creating Piles");
-            for (int i = 0; i < childCount; i++) {
-                piles[i] = transform->GetChild(i)->get_gameObject()->AddComponent<Pile*>();
-            }
-
-            for (auto pile : piles) {
-                auto transform = pile->get_transform();
-                int childCount = transform->get_childCount();
-                for (int i = 0; i < childCount; i++) {
-                    auto child = transform->GetChild(i);
-                    auto pillow = child->get_gameObject()->AddComponent<Pillow*>();
-                }
-            }
+            auto go = Object::Instantiate(asset);
+            Object::DontDestroyOnLoad(go);
+            go->SetActive(false);
+            _pillowContainer = go->GetComponent<PillowContainer*>();
 
             // wait for textures to load
             DEBUG("Loading textures");
-            co_yield custom_types::Helpers::CoroutineHelper::New(texturePool->LoadTextures());
+            co_yield custom_types::Helpers::CoroutineHelper::New(_texturePool->LoadTextures());
 
             loaded = true;
-            
+
             DEBUG("OnFinished");
             // run onFinished if given
             if (onFinished)
@@ -107,34 +74,48 @@ namespace CustomPillows {
         }
 
         Pile* AssetManager::GetPile(int index) {
-            if (!loaded || piles.Length() == 0) return nullptr;
+            if (!loaded) {
+                ERROR("Assets did not finish loading... returning null!");
+                return nullptr;
+            }
+
+            if (!_pillowContainer || !_pillowContainer->m_CachedPtr.m_value) {
+                INFO("Pillow container was not valid, returning null!");
+                return nullptr;
+            }
+
+            auto& piles = _pillowContainer->piles;
+            if (piles.size() == 0) {
+                ERROR("Pillow container had 0 piles, returning null!");
+                return nullptr;
+            }
+
             if (index < 0) {
+                DEBUG("Returning random pile");
                 index = rand();
             }
 
-            index %= piles.Length();
+            // ensure index falls in range
+            index %= piles.size();
 
             DEBUG("Got Pile {}: {}", index, fmt::ptr(piles[index]));
-            auto clone = Object::Instantiate(piles[index]);
-            clone->texturePool = texturePool;
+            // instantiate and inject the pile
+            auto clone = _container->InstantiatePrefab(piles[index])->GetComponent<Pile*>();
             return clone;
         }
 
-
-        void AssetManager::OnGameRestart() {
-            if (container)
-            {
-                Object::DestroyImmediate(container);
-                container = nullptr;
+        void AssetManager::Dispose() {
+            INFO("Disposing of loaded assets for Custom Pillows!");
+            if (_pillowContainer && _pillowContainer->m_CachedPtr.m_value) {
+                UnityEngine::Object::DestroyImmediate(_pillowContainer->get_gameObject());
             }
+            _pillowContainer = nullptr;
 
-            if (bundle)
-            {
-                bundle->Unload(true);
-                bundle = nullptr;
+            if (_bundle && _bundle->m_CachedPtr.m_value) {
+                _bundle->Unload(true);
             }
-
-            instance = nullptr;
-            Object::DestroyImmediate(this->get_gameObject());
+            _bundle = nullptr;
+            loading = false;
+            loaded = false;
         }
 }

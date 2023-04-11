@@ -6,11 +6,12 @@
 #include "UnityEngine/Texture2D.hpp"
 #include "UnityEngine/Sprite.hpp"
 
+#include "System/IDisposable.hpp"
 #include "System/Collections/Generic/Dictionary_2.hpp"
 #include "System/Collections/Generic/KeyValuePair_2.hpp"
 
 
-DECLARE_CLASS_CODEGEN(CustomPillows, TexturePool, UnityEngine::MonoBehaviour,
+DECLARE_CLASS_CODEGEN_INTERFACES(CustomPillows, TexturePool, Il2CppObject, classof(System::IDisposable*),
 
     public:
         template<typename T, typename U>
@@ -26,7 +27,7 @@ DECLARE_CLASS_CODEGEN(CustomPillows, TexturePool, UnityEngine::MonoBehaviour,
         DECLARE_INSTANCE_FIELD(ArrayW<NameToTexturePair>, inActiveTexturesArray);
 
 
-        DECLARE_INSTANCE_METHOD(void, OnDestroy);
+        DECLARE_OVERRIDE_METHOD(void, Dispose, il2cpp_utils::il2cpp_type_check::MetadataGetter<&::System::IDisposable::Dispose>::get());
         DECLARE_CTOR(ctor);
     public:
 
@@ -35,7 +36,7 @@ DECLARE_CLASS_CODEGEN(CustomPillows, TexturePool, UnityEngine::MonoBehaviour,
 
         void ActivateTexture(StringW name);
         void DeactivateTexture(StringW name);
-        
+
         custom_types::Helpers::Coroutine LoadTextures(std::function<void(void)> onFinished = nullptr);
     private:
         void UpdateArrays();
